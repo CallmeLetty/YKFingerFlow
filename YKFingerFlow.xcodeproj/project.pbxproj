@@ -6,6 +6,14 @@
 	objectVersion = 77;
 	objects = {
 
+/* Begin PBXBuildFile section */
+		AA676F9C2FD0EBCD001239CE /* RxSwift in Frameworks */ = {isa = PBXBuildFile; productRef = AA676F9B2FD0EBCD001239CE /* RxSwift */; };
+		AA676FA12FD0EC55001239CE /* SnapKit in Frameworks */ = {isa = PBXBuildFile; productRef = AA676F9F2FD0EC55001239CE /* SnapKit */; };
+		AA676FA22FD0EC55001239CE /* Reusable in Frameworks */ = {isa = PBXBuildFile; productRef = AA676FA02FD0EC55001239CE /* Reusable */; };
+		AA676FA52FD0EC55001239CE /* Lottie in Frameworks */ = {isa = PBXBuildFile; productRef = AA676FA42FD0EC55001239CE /* Lottie */; };
+		AA676FA62FD0EC55001239CE /* RxCocoa in Frameworks */ = {isa = PBXBuildFile; productRef = AA676FA72FD0EC55001239CE /* RxCocoa */; };
+/* End PBXBuildFile section */
+
 /* Begin PBXContainerItemProxy section */
 		AA6767762FD0E3B7001239CE /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -65,6 +73,11 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				AA676F9C2FD0EBCD001239CE /* RxSwift in Frameworks */,
+				AA676FA62FD0EC55001239CE /* RxCocoa in Frameworks */,
+				AA676FA12FD0EC55001239CE /* SnapKit in Frameworks */,
+				AA676FA22FD0EC55001239CE /* Reusable in Frameworks */,
+				AA676FA52FD0EC55001239CE /* Lottie in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -125,6 +138,11 @@
 			);
 			name = YKFingerFlow;
 			packageProductDependencies = (
+				AA676F9B2FD0EBCD001239CE /* RxSwift */,
+				AA676FA72FD0EC55001239CE /* RxCocoa */,
+				AA676F9F2FD0EC55001239CE /* SnapKit */,
+				AA676FA02FD0EC55001239CE /* Reusable */,
+				AA676FA42FD0EC55001239CE /* Lottie */,
 			);
 			productName = YKFingerFlow;
 			productReference = AA67675F2FD0E3B6001239CE /* YKFingerFlow.app */;
@@ -208,6 +226,12 @@
 			);
 			mainGroup = AA6767562FD0E3B6001239CE;
 			minimizedProjectReferenceProxies = 1;
+			packageReferences = (
+				AA676F9A2FD0EBCD001239CE /* XCRemoteSwiftPackageReference "RxSwift" */,
+				AA676F9D2FD0EBF1001239CE /* XCRemoteSwiftPackageReference "SnapKit" */,
+				AA676F9E2FD0EC55001239CE /* XCRemoteSwiftPackageReference "Reusable" */,
+				AA676FA32FD0EC55001239CE /* XCRemoteSwiftPackageReference "lottie-ios" */,
+			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = AA6767602FD0E3B6001239CE /* Products */;
 			projectDirPath = "";
@@ -297,6 +321,7 @@
 				INFOPLIST_KEY_UIMainStoryboardFile = Main;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				IPHONEOS_DEPLOYMENT_TARGET = 26.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -305,6 +330,10 @@
 				PRODUCT_BUNDLE_IDENTIFIER = app.podcast.cosmos.YKFingerFlow;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				STRING_CATALOG_GENERATE_SYMBOLS = YES;
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
+				SUPPORTS_MACCATALYST = NO;
+				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = NO;
+				SUPPORTS_XR_DESIGNED_FOR_IPHONE_IPAD = NO;
 				SWIFT_APPROACHABLE_CONCURRENCY = YES;
 				SWIFT_DEFAULT_ACTOR_ISOLATION = MainActor;
 				SWIFT_EMIT_LOC_STRINGS = YES;
@@ -329,6 +358,7 @@
 				INFOPLIST_KEY_UIMainStoryboardFile = Main;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				IPHONEOS_DEPLOYMENT_TARGET = 26.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -337,6 +367,10 @@
 				PRODUCT_BUNDLE_IDENTIFIER = app.podcast.cosmos.YKFingerFlow;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				STRING_CATALOG_GENERATE_SYMBOLS = YES;
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
+				SUPPORTS_MACCATALYST = NO;
+				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = NO;
+				SUPPORTS_XR_DESIGNED_FOR_IPHONE_IPAD = NO;
 				SWIFT_APPROACHABLE_CONCURRENCY = YES;
 				SWIFT_DEFAULT_ACTOR_ISOLATION = MainActor;
 				SWIFT_EMIT_LOC_STRINGS = YES;
@@ -591,6 +625,69 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		AA676F9A2FD0EBCD001239CE /* XCRemoteSwiftPackageReference "RxSwift" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/ReactiveX/RxSwift.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 6.10.2;
+			};
+		};
+		AA676F9D2FD0EBF1001239CE /* XCRemoteSwiftPackageReference "SnapKit" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/SnapKit/SnapKit.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 6.0.0;
+			};
+		};
+		AA676F9E2FD0EC55001239CE /* XCRemoteSwiftPackageReference "Reusable" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/AliSoftware/Reusable.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 4.1.2;
+			};
+		};
+		AA676FA32FD0EC55001239CE /* XCRemoteSwiftPackageReference "lottie-ios" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/airbnb/lottie-ios.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 4.0.0;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		AA676F9B2FD0EBCD001239CE /* RxSwift */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = AA676F9A2FD0EBCD001239CE /* XCRemoteSwiftPackageReference "RxSwift" */;
+			productName = RxSwift;
+		};
+		AA676F9F2FD0EC55001239CE /* SnapKit */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = AA676F9D2FD0EBF1001239CE /* XCRemoteSwiftPackageReference "SnapKit" */;
+			productName = SnapKit;
+		};
+		AA676FA02FD0EC55001239CE /* Reusable */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = AA676F9E2FD0EC55001239CE /* XCRemoteSwiftPackageReference "Reusable" */;
+			productName = Reusable;
+		};
+		AA676FA42FD0EC55001239CE /* Lottie */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = AA676FA32FD0EC55001239CE /* XCRemoteSwiftPackageReference "lottie-ios" */;
+			productName = Lottie;
+		};
+		AA676FA72FD0EC55001239CE /* RxCocoa */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = AA676F9A2FD0EBCD001239CE /* XCRemoteSwiftPackageReference "RxSwift" */;
+			productName = RxCocoa;
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = AA6767572FD0E3B6001239CE /* Project object */;
 }

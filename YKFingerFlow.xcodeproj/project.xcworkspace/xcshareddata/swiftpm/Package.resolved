@@ -1,0 +1,42 @@
+{
+  "originHash" : "79569a01fdde86d840a3cdbbedeeebca070d760b2f384d3f409516c9965373fe",
+  "pins" : [
+    {
+      "identity" : "lottie-ios",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/airbnb/lottie-ios.git",
+      "state" : {
+        "revision" : "0cb03fd7564d27345bcd96144b811e56212949c6",
+        "version" : "4.6.0"
+      }
+    },
+    {
+      "identity" : "reusable",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/AliSoftware/Reusable.git",
+      "state" : {
+        "revision" : "18674709421360e210c2ecd4e8e08b217d4ea61d",
+        "version" : "4.1.2"
+      }
+    },
+    {
+      "identity" : "rxswift",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/ReactiveX/RxSwift.git",
+      "state" : {
+        "revision" : "132aea4f236ccadc51590b38af0357a331d51fa2",
+        "version" : "6.10.2"
+      }
+    },
+    {
+      "identity" : "snapkit",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/SnapKit/SnapKit.git",
+      "state" : {
+        "revision" : "e27a338a03a5f388de759da63f9baf7988ed9e00",
+        "version" : "6.0.0"
+      }
+    }
+  ],
+  "version" : 3
+}
