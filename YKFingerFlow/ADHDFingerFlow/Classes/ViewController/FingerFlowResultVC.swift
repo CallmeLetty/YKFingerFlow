@@ -2,9 +2,6 @@
 // All rights reserved
 // Author: liuyuanyuan@bongmi.com
 
-//import BMADHDCommonResources
-//import BMADHDStreak
-//import BMSensors
 import SnapKit
 import RxSwift
 import RxCocoa

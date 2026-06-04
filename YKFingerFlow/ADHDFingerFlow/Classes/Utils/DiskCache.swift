@@ -2,7 +2,6 @@
 // All rights reserved
 // Author: liuyuanyuan@bongmi.com
 //
-// From BMUserBusinessLib
 
 import CryptoKit
 import Foundation

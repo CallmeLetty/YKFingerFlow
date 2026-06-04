@@ -2,7 +2,6 @@
 // All rights reserved
 // Author: liuyuanyuan@bongmi.com
 //
-// From BMADHDUIKit/BMADHDUIExtensions.swift
 
 import Foundation
 

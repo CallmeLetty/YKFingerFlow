@@ -2,8 +2,6 @@
 // All rights reserved
 // Author: liuyuanyuan@bongmi.com
 
-//import BMBaseWidgetLib
-
 import SnapKit
 import Foundation
 import UIKit
@@ -11,7 +9,7 @@ import UIKit
 class FingerFloweBundleUtil {
   static func bundle() -> Bundle? {
     let mainBundle = Bundle(for: FingerFloweBundleUtil.self)
-    guard let path = mainBundle.path(forResource: "BMADHDFingerFlow",
+    guard let path = mainBundle.path(forResource: "FingerFlow",
                                      ofType: "bundle"),
           let bundle = Bundle(path: path) else {
       return nil

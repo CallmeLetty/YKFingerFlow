@@ -2,8 +2,6 @@
 // All rights reserved
 // Author: liuyuanyuan@bongmi.com
 
-//import BMUserBusinessLib
-//import BMBaseWidgetLib
 import UIKit
 
 class FingerFlowShareImageProvider: UIActivityItemProvider {

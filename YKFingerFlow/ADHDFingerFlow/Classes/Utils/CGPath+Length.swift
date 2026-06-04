@@ -2,7 +2,7 @@
 // All rights reserved
 // Author: liuyuanyuan@bongmi.com
 //
-// From BMBaseWidgetLib
+
 
 import CoreGraphics
 

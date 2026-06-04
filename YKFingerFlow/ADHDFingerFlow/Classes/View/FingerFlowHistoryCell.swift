@@ -4,8 +4,6 @@
 
 import Reusable
 import UIKit
-//import BMBaseWidgetLib
-//import BMADHDCommonResources
 
 import SnapKit
 class FingerFlowHistoryCell: UITableViewCell, Reusable {

@@ -2,8 +2,6 @@
 // All rights reserved
 // Author: liuyuanyuan@bongmi.com
 
-//import BMTUploadToolsLib
-//import BMUserBusinessLib
 import UIKit
 import Foundation
 import AVFAudio
