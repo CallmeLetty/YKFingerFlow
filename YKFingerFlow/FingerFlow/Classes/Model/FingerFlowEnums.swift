@@ -158,7 +158,7 @@ enum FingerFlowPropmptType {
 
   var localizedText: String {
     switch self {
-      case .place:      return "Code.FingerflowPrimeText"
+      case .place:      return "手指长按发光圆心3s启动"
       case .keep:       return "Code.FingerflowBeforetrainingText1"
       case .welldone:   return "Code.FingerflowTrainingText1"
       case .completing: return "Code.FingerflowEndingText1"

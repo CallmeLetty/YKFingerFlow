@@ -5,6 +5,7 @@
 //  Created by Yakamoz on 2026/6/4.
 //
 
+import SnapKit
 import UIKit
 
 class ViewController: UIViewController {
@@ -15,6 +16,16 @@ class ViewController: UIViewController {
         button.titleLabel?.font = .systemFont(ofSize: 17, weight: .semibold)
         button.addTarget(self, action: #selector(enterFingerFlowTapped), for: .touchUpInside)
         button.translatesAutoresizingMaskIntoConstraints = false
+        button.backgroundColor = .systemBlue.withAlphaComponent(0.5)
+        return button
+    }()
+    private lazy var enterButton2: UIButton = {
+        let button = UIButton(type: .system)
+        button.setTitle("进入 New Finger Flow", for: .normal)
+        button.titleLabel?.font = .systemFont(ofSize: 17, weight: .semibold)
+        button.addTarget(self, action: #selector(enterNewFingerFlowTapped), for: .touchUpInside)
+        button.translatesAutoresizingMaskIntoConstraints = false
+        button.backgroundColor = .systemPink.withAlphaComponent(0.5)
         return button
     }()
 
@@ -22,18 +33,28 @@ class ViewController: UIViewController {
         super.viewDidLoad()
 
         title = "YKFingerFlow"
-        setupButton()
+        
+        view.addSubview(enterButton)
+        view.addSubview(enterButton2)
+        
+        enterButton.snp.makeConstraints { make in
+            make.centerX.equalToSuperview()
+            make.centerY.equalToSuperview().offset(-30)
+            make.size.equalTo(CGSizeMake(200, 50))
+        }
+        
+        enterButton2.snp.makeConstraints { make in
+            make.centerX.size.equalTo(enterButton)
+            make.top.equalTo(enterButton.snp.bottom).offset(20)
+        }
     }
 
-    private func setupButton() {
-        view.addSubview(enterButton)
-        NSLayoutConstraint.activate([
-            enterButton.centerXAnchor.constraint(equalTo: view.centerXAnchor),
-            enterButton.centerYAnchor.constraint(equalTo: view.centerYAnchor)
-        ])
-    }
 
     @objc private func enterFingerFlowTapped() {
+        let fingerFlowVC = FingerFlowVC()
+        navigationController?.pushViewController(fingerFlowVC, animated: true)
+    }
+    @objc private func enterNewFingerFlowTapped() {
         let fingerFlowVC = FingerFlowVC()
         navigationController?.pushViewController(fingerFlowVC, animated: true)
     }

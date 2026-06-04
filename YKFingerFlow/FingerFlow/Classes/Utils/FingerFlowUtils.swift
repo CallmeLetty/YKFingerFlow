@@ -20,10 +20,6 @@ class FingerFloweBundleUtil {
 }
 
 class FingerFloweShareUtil {
-  func text() -> String {
-    return "Code.ChallengeFingerflowPicText2"
-  }
-
   func image(imageUrlString: String,
              completion: ((UIImage?) -> Void)?) {
     requestImage(url: imageUrlString) { image in
@@ -43,8 +39,7 @@ class FingerFloweShareUtil {
     effectView.alpha = 0.2
     effectView.isUserInteractionEnabled = false
 
-    var rawSize = rawImage.size
-    bgView.size = rawSize.geometricScale(width: 315)
+    bgView.size = rawImage.size.geometricScale(width: 315)
     let titleLabel: UILabel = {
       let label = UILabel()
       label.textColor = UIColor.white

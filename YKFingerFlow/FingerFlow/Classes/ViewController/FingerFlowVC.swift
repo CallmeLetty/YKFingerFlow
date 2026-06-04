@@ -84,13 +84,12 @@ public class FingerFlowVC: UIViewController {
     }()
     
     private(set) lazy var titleLabel = {
-        let titleLabel = UILabel()
-        
-        titleLabel.font = UIFont.systemFont(ofSize: 24, weight: .semibold)
-        titleLabel.textColor = UIColor.white
-        titleLabel.text = "Fingerflow挑战"
-        titleLabel.numberOfLines = 0
-        return titleLabel
+        let v = UILabel()
+        v.font = .systemFont(ofSize: 24, weight: .semibold)
+        v.textColor = UIColor.white
+        v.text = "Fingerflow挑战"
+        v.numberOfLines = 0
+        return v
     }()
     
     private(set) lazy var timePicker = FingerFlowTimePicker(defaultValue: Int(duration) / 60,
@@ -200,7 +199,7 @@ private extension FingerFlowVC {
         
         titleLabel.snp.makeConstraints { make in
             make.top.equalTo(35 + FrameGuide.safeAreaBottomHeight)
-            make.left.equalToSuperview().offset(20)
+            make.centerX.equalToSuperview()
             
         }
         

@@ -117,7 +117,7 @@ private extension FingerFlowResultVC {
         return
       }
 
-      let textItem = FingerFloweShareUtil().text()
+      let textItem = "测试文案"
       let imageItem = FingerFlowShareImageProvider(shareImage: self.model.shareImage)
       let urlItem = FingerFlowShareURLProvider()
       let vc = UIActivityViewController(activityItems: [textItem, imageItem, urlItem],

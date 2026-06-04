@@ -96,8 +96,7 @@ class FingerFlowTimePicker: UIView {
 
   private lazy var chosenLine = {
     let view = UIView()
-
-    view.backgroundColor = UIColor.black
+    view.backgroundColor = UIColor.white
     return view
   }()
 }
