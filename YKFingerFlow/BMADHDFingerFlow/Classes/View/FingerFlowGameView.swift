@@ -2,7 +2,7 @@
 // All rights reserved
 // Author: liuyuanyuan@bongmi.com
 
-//import UIComponent
+import UIKit
 //import SwiftyFoundation
 
 import SnapKit
@@ -254,7 +254,7 @@ class FingerFlowGameView: UIView {
     let preparationLabel = UILabel()
 
     preparationLabel.font = UIFont.systemFont(ofSize: 22, weight: .semibold)
-    preparationLabel.textColor = UIColor.black
+    preparationLabel.textColor = UIColor.white
     preparationLabel.text = "Code.FingerflowBeforetrainingText2"
     preparationLabel.textAlignment = .center
     preparationLabel.numberOfLines = 0
@@ -266,24 +266,22 @@ class FingerFlowGameView: UIView {
     let preparationCountLabel = UILabel()
 
     preparationCountLabel.font = UIFont.systemFont(ofSize: 34, weight: .semibold)
-    preparationCountLabel.textColor = UIColor.black
+    preparationCountLabel.textColor = UIColor.white
     preparationCountLabel.text = "3"
     preparationCountLabel.textAlignment = .center
     preparationCountLabel.numberOfLines = 0
     preparationCountLabel.alpha = 0
     return preparationCountLabel
   }()
-  private lazy var guideDot = UIImageView(image: UIImage(named: "fingerflow_dot_img",
-                                                         in: type(of: self)))
+  private lazy var guideDot = UIImageView(image: UIImage(named: "fingerflow_dot_img"))
 
-  private lazy var putDot = UIImageView(image: UIImage(named: "fingerflow_put_img",
-                                                       in: type(of: self)))
+  private lazy var putDot = UIImageView(image: UIImage(named: "fingerflow_put_img"))
 
   private(set) lazy var promptLabel = {
     let promptLabel = UILabel()
 
     promptLabel.font = UIFont.systemFont(ofSize: 20, weight: .medium)
-    promptLabel.textColor = UIColor.black.withAlphaComponent(0.8)
+    promptLabel.textColor = UIColor.white.withAlphaComponent(0.8)
     promptLabel.textAlignment = .center
     promptLabel.numberOfLines = 0
     return promptLabel
@@ -293,7 +291,7 @@ class FingerFlowGameView: UIView {
     let completingTimeLabel = UILabel()
 
     completingTimeLabel.font = UIFont.systemFont(ofSize: 34, weight: .semibold)
-    completingTimeLabel.textColor = UIColor.black
+    completingTimeLabel.textColor = UIColor.white
     completingTimeLabel.textAlignment = .center
     completingTimeLabel.numberOfLines = 0
     completingTimeLabel.alpha = 0
@@ -304,7 +302,7 @@ class FingerFlowGameView: UIView {
     let completingLabel = UILabel()
 
     completingLabel.font = UIFont.systemFont(ofSize: 18, weight: .medium)
-    completingLabel.textColor = UIColor.black.withAlphaComponent(0.8)
+    completingLabel.textColor = UIColor.white.withAlphaComponent(0.8)
     completingLabel.text = "Code.FingerflowEndingText1"
     completingLabel.textAlignment = .center
     completingLabel.numberOfLines = 0

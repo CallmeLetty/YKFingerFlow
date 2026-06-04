@@ -12,6 +12,7 @@
 		AA676FA22FD0EC55001239CE /* Reusable in Frameworks */ = {isa = PBXBuildFile; productRef = AA676FA02FD0EC55001239CE /* Reusable */; };
 		AA676FA52FD0EC55001239CE /* Lottie in Frameworks */ = {isa = PBXBuildFile; productRef = AA676FA42FD0EC55001239CE /* Lottie */; };
 		AA676FA62FD0EC55001239CE /* RxCocoa in Frameworks */ = {isa = PBXBuildFile; productRef = AA676FA72FD0EC55001239CE /* RxCocoa */; };
+		AA676FAA2FD0ED00001239CE /* SDWebImage in Frameworks */ = {isa = PBXBuildFile; productRef = AA676FA92FD0ED00001239CE /* SDWebImage */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -78,6 +79,7 @@
 				AA676FA12FD0EC55001239CE /* SnapKit in Frameworks */,
 				AA676FA22FD0EC55001239CE /* Reusable in Frameworks */,
 				AA676FA52FD0EC55001239CE /* Lottie in Frameworks */,
+				AA676FAA2FD0ED00001239CE /* SDWebImage in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -143,6 +145,7 @@
 				AA676F9F2FD0EC55001239CE /* SnapKit */,
 				AA676FA02FD0EC55001239CE /* Reusable */,
 				AA676FA42FD0EC55001239CE /* Lottie */,
+				AA676FA92FD0ED00001239CE /* SDWebImage */,
 			);
 			productName = YKFingerFlow;
 			productReference = AA67675F2FD0E3B6001239CE /* YKFingerFlow.app */;
@@ -231,6 +234,7 @@
 				AA676F9D2FD0EBF1001239CE /* XCRemoteSwiftPackageReference "SnapKit" */,
 				AA676F9E2FD0EC55001239CE /* XCRemoteSwiftPackageReference "Reusable" */,
 				AA676FA32FD0EC55001239CE /* XCRemoteSwiftPackageReference "lottie-ios" */,
+				AA676FA82FD0ED00001239CE /* XCRemoteSwiftPackageReference "SDWebImage" */,
 			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = AA6767602FD0E3B6001239CE /* Products */;
@@ -659,6 +663,14 @@
 				minimumVersion = 4.0.0;
 			};
 		};
+		AA676FA82FD0ED00001239CE /* XCRemoteSwiftPackageReference "SDWebImage" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/SDWebImage/SDWebImage.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 5.0.0;
+			};
+		};
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
@@ -686,6 +698,11 @@
 			isa = XCSwiftPackageProductDependency;
 			package = AA676F9A2FD0EBCD001239CE /* XCRemoteSwiftPackageReference "RxSwift" */;
 			productName = RxCocoa;
+		};
+		AA676FA92FD0ED00001239CE /* SDWebImage */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = AA676FA82FD0ED00001239CE /* XCRemoteSwiftPackageReference "SDWebImage" */;
+			productName = SDWebImage;
 		};
 /* End XCSwiftPackageProductDependency section */
 	};

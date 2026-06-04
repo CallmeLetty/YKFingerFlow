@@ -3,11 +3,11 @@
 // Author: liuyuanyuan@bongmi.com
 
 import AudioToolbox
-//import UIComponent
 import Reusable
 import SnapKit
+import UIKit
 
-fileprivate let RulerLineColor            = UIColor.black
+fileprivate let RulerLineColor            = UIColor.white
 fileprivate let RulerGap: CGFloat         = 14
 
 protocol FingerFlowTimePickerDelegate:NSObjectProtocol {
@@ -58,7 +58,7 @@ class FingerFlowTimePicker: UIView {
   private lazy var valueLabel = {
     let valueLabel = UILabel()
 
-    valueLabel.textColor = UIColor.black.withAlphaComponent(0.8)
+    valueLabel.textColor = UIColor.white.withAlphaComponent(0.8)
     valueLabel.font = UIFont.systemFont(ofSize: 34, weight: .semibold)
     return valueLabel
   }()
@@ -66,9 +66,10 @@ class FingerFlowTimePicker: UIView {
   private lazy var unitLabel = {
     let unitLabel = UILabel()
 
-    unitLabel.textColor = UIColor.black.withAlphaComponent(0.8)
+    unitLabel.textColor = UIColor.white.withAlphaComponent(0.8)
     unitLabel.font = UIFont.systemFont(ofSize: 12, weight: .medium)
-    unitLabel.text = "Code.FingerflowPrimeMin"
+    unitLabel.text = "选择时间"
+    unitLabel.restorationIdentifier = "Code.FingerflowPrimeMin"
     return unitLabel
   }()
 
@@ -86,9 +87,9 @@ class FingerFlowTimePicker: UIView {
     collectionView.delegate = self
     collectionView.dataSource = self
     collectionView.register(UICollectionViewCell.self,
-                            forCellWithReuseIdentifier: UICollectionViewCell.className)
+                            forCellWithReuseIdentifier: "UICollectionViewCell")
     collectionView.register(FingerFlowSingleCell.self,
-                            forCellWithReuseIdentifier: FingerFlowSingleCell.className)
+                            forCellWithReuseIdentifier: "FingerFlowSingleCell")
 
     return collectionView
   }()
@@ -162,7 +163,7 @@ extension FingerFlowTimePicker : UICollectionViewDataSource,
   func collectionView(_ collectionView: UICollectionView,
                       cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
     guard indexPath.item != 0 else {
-      let cell = collectionView.dequeueReusableCell(withReuseIdentifier: UICollectionViewCell.className,
+      let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "UICollectionViewCell",
                                                     for: indexPath)
       cell.backgroundColor = .clear
     return cell

@@ -4,6 +4,7 @@
 
 //import BMUserBusinessLib
 import AVKit
+import SDWebImage
 
 extension FingerFlowVC {
   func checkChosenResource() {

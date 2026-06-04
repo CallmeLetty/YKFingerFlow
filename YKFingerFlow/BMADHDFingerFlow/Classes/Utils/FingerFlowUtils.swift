@@ -5,6 +5,9 @@
 //import BMBaseWidgetLib
 
 import SnapKit
+import Foundation
+import UIKit
+
 class FingerFloweBundleUtil {
   static func bundle() -> Bundle? {
     let mainBundle = Bundle(for: FingerFloweBundleUtil.self)
@@ -46,7 +49,7 @@ class FingerFloweShareUtil {
     bgView.size = rawSize.geometricScale(width: 315)
     let titleLabel: UILabel = {
       let label = UILabel()
-      label.textColor = UIColor.black
+      label.textColor = UIColor.white
       label.font = UIFont.systemFont(ofSize: 16, weight: .medium)
       label.text = "Code.ChallengeFingerflowPicText1"
       return label
@@ -54,18 +57,17 @@ class FingerFloweShareUtil {
 
     let durationLabel: UILabel = {
       let label = UILabel()
-      label.textColor = UIColor.black
+      label.textColor = UIColor.white
       label.font = UIFont.systemFont(ofSize: 24, weight: .semibold)
       label.text = TimeInterval(duration * 1000).toSecondTimeString()
       return label
     }()
 
-    let logoImageView = UIImageView(image: UIImage(named: "sharecard_logo_img",
-                                                 in: FingerFloweBundleUtil.self))
+    let logoImageView = UIImageView(image: UIImage(named: "sharecard_logo_img"))
 
     let appNameLabel: UILabel = {
       let label = UILabel()
-      label.textColor = UIColor.black
+      label.textColor = UIColor.white
       label.font = UIFont.systemFont(ofSize: 14, weight: .semibold)
       label.text = "Code.ChallengeFingerflowPicText4"
       return label
@@ -79,8 +81,7 @@ class FingerFloweShareUtil {
       return label
     }()
 
-    let qrImageView = UIImageView(image: UIImage(named: "sharecard_qrcode_img",
-                                                 in: FingerFloweBundleUtil.self))
+    let qrImageView = UIImageView(image: UIImage(named: "sharecard_qrcode_img"))
     bgView.addSubview(effectView)
     effectView.snp.makeConstraints { make in
       make.edges.equalToSuperview()

@@ -2,9 +2,9 @@
 // All rights reserved
 // Author: liuyuanyuan@bongmi.com
 
-//import UIComponent
-
+import UIKit
 import SnapKit
+
 class FingerFlowPauseView: UIView {
   var onExit: (()->Void)?
   var onContinue: (()->Void)?
@@ -32,7 +32,7 @@ class FingerFlowPauseView: UIView {
     let view = UIView()
 
     view.backgroundColor = UIColor(hexString: "#172240")
-    view.layerCornerRadius = 15
+    view.layer.cornerRadius = 15
     return view
   }()
 
@@ -41,7 +41,7 @@ class FingerFlowPauseView: UIView {
 
     timeLabel.font = UIFont.systemFont(ofSize: 24, weight: .semibold)
     timeLabel.text = self.timeString
-    timeLabel.textColor = UIColor.black
+    timeLabel.textColor = UIColor.white
     timeLabel.textAlignment = .center
     timeLabel.numberOfLines = 0
     return timeLabel
@@ -51,7 +51,7 @@ class FingerFlowPauseView: UIView {
     let subTitleLabel = UILabel()
 
     subTitleLabel.font = UIFont.systemFont(ofSize: 18, weight: .medium)
-    subTitleLabel.textColor = UIColor.black
+    subTitleLabel.textColor = UIColor.white
     subTitleLabel.text = "Code.FingerflowWarningText1"
     subTitleLabel.textAlignment = .center
     subTitleLabel.numberOfLines = 0
@@ -62,9 +62,8 @@ class FingerFlowPauseView: UIView {
     let contentLabel = UILabel()
 
     contentLabel.font = UIFont.systemFont(ofSize: 16, weight: .medium)
-    contentLabel.textColor = UIColor.black.withAlphaComponent(0.8)
-    contentLabel.setLineSpacing(4,
-                      with: "Code.FingerflowWarningText2")
+    contentLabel.textColor = UIColor.white.withAlphaComponent(0.8)
+    contentLabel.text = "Code.FingerflowWarningText2"
     contentLabel.textAlignment = .center
     contentLabel.numberOfLines = 0
     return contentLabel
@@ -75,7 +74,7 @@ class FingerFlowPauseView: UIView {
 
     button.setTitle("Code.BottonExit",
                          for: .normal)
-    button.layerCornerRadius = 25
+    button.layer.cornerRadius = 25
     button.backgroundColor = UIColor(hexString: "#213358")
     button.setTitleColor(UIColor.blue,
                      for: .normal)
@@ -88,7 +87,7 @@ class FingerFlowPauseView: UIView {
 
     button.setTitle("Code.ButtonContinue",
                          for: .normal)
-    button.layerCornerRadius = 25
+    button.layer.cornerRadius = 25
     button.backgroundColor = UIColor.blue
     button.setTitleColor(UIColor(hexString: "#131C41"),
                      for: .normal)

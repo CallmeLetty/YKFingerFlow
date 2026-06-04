@@ -2,8 +2,8 @@
 // All rights reserved
 // Author: liuyuanyuan@bongmi.com
 
-//import Reusable
-//import UIComponent
+import Reusable
+import UIKit
 //import BMBaseWidgetLib
 //import BMADHDCommonResources
 
@@ -26,7 +26,7 @@ class FingerFlowHistoryCell: UITableViewCell, Reusable {
   private(set) lazy var durationLabel = {
     let durationLabel = UILabel()
 
-    durationLabel.textColor = UIColor.black
+    durationLabel.textColor = UIColor.white
     durationLabel.font = UIFont.systemFont(ofSize: 16, weight: .medium)
     durationLabel.numberOfLines = 1
     return durationLabel
@@ -35,7 +35,7 @@ class FingerFlowHistoryCell: UITableViewCell, Reusable {
   private(set) lazy var timeLabel = {
     let timeLabel = UILabel()
 
-    timeLabel.textColor = UIColor.black.withAlphaComponent(0.6)
+    timeLabel.textColor = UIColor.white.withAlphaComponent(0.6)
     timeLabel.font = UIFont.systemFont(ofSize: 13, weight: .medium)
     timeLabel.numberOfLines = 1
     return timeLabel
@@ -43,9 +43,8 @@ class FingerFlowHistoryCell: UITableViewCell, Reusable {
 
   private lazy var arrowImageView = {
     let imageView = UIImageView()
-
-    let image = Bundle.bmftCommon_IMG("sellall_arrow_icon")
-    imageView.image = image.bmbw_image(withTintColor: UIColor.black.withAlphaComponent(0.6))
+      let image = UIImage(systemName: "chevron.right")?.withRenderingMode(.alwaysTemplate)
+      imageView.image = image?.withTintColor(UIColor.black.withAlphaComponent(0.6))
     return imageView
   }()
 }

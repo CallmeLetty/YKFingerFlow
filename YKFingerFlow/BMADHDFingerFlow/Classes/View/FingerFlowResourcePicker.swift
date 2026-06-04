@@ -9,6 +9,7 @@ import Reusable
 import SnapKit
 import RxSwift
 import RxCocoa
+import SDWebImage
 
 protocol FingerFlowResourcePickerDelegate: NSObjectProtocol {
   func onCancelingSelection(_ resourceType: FingerFlowResourcePicker.ResourceType)
@@ -168,10 +169,10 @@ class FingerFlowResourcePicker: UIView {
   private lazy var confirmButton = {
     let button = UIButton()
 
-    button.setTitle("Code.ButtonConfirm",
+    button.setTitle("确认",
                          for: .normal)
       button.layer.cornerRadius = 29
-    button.backgroundColor = UIColor.blue
+    button.backgroundColor = UIColor.systemTeal
     button.setTitleColor(UIColor(hexString: "131C41"),
                      for: .normal)
     button.titleLabel?.font = UIFont.systemFont(ofSize: 16, weight: .semibold)
@@ -316,7 +317,7 @@ class FingerFlowMusicPickerCell: UIView, Reusable {
     let label = UILabel()
 
     label.font = UIFont.systemFont(ofSize: 12, weight: .medium)
-    label.textColor = UIColor.black.withAlphaComponent(0.8)
+    label.textColor = UIColor.white.withAlphaComponent(0.8)
     label.textAlignment = .center
     label.text = self.type.title
     label.numberOfLines = 0
@@ -349,7 +350,7 @@ class FingerFlowImagePickerCell: UIView {
 
   var highlighted: Bool = false {
     didSet {
-      thumbnailImage.layerBorderColor = self.highlighted ? UIColor.blue : .clear
+        thumbnailImage.layer.borderColor = (self.highlighted ? UIColor.blue : .clear).cgColor
     }
   }
 
@@ -373,9 +374,9 @@ class FingerFlowImagePickerCell: UIView {
   private lazy var thumbnailImage = {
     let imageView = UIImageView()
 
-    imageView.layerBorderWidth = 1.5
-    imageView.layerBorderColor = .clear
-    imageView.layerCornerRadius = 8
+      imageView.layer.borderWidth = 1.5
+      imageView.layer.borderColor = UIColor.clear.cgColor
+    imageView.layer.cornerRadius = 8
     imageView.sd_setImage(with: URL(string: self.type.imageUrlString))
     return imageView
   }()

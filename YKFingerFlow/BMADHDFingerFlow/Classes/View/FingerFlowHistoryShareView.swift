@@ -2,11 +2,12 @@
 // All rights reserved
 // Author: liuyuanyuan@bongmi.com
 
-//import UIComponent
 
 import SnapKit
 import RxSwift
 import RxCocoa
+import UIKit
+
 class FingerFlowHistoryShareView: UIView {
   private let rxDisposeBag = DisposeBag()
   private let image: UIImage
@@ -40,7 +41,7 @@ class FingerFlowHistoryShareView: UIView {
     imageView.image = self.image
     imageView.contentMode = .scaleToFill
     imageView.backgroundColor = .clear
-    imageView.layerCornerRadius = 15
+    imageView.layer.cornerRadius = 15
     return imageView
   }()
 
@@ -53,17 +54,15 @@ class FingerFlowHistoryShareView: UIView {
     button.setTitleColor(UIColor(hexString: "#131C41"),
                      for: .normal)
     button.titleLabel?.font = UIFont.systemFont(ofSize: 16, weight: .semibold)
-    button.layerCornerRadius = 29
+    button.layer.cornerRadius = 29
     return button
   }()
 
   private(set) lazy var exitButton = {
     let button = UIButton()
-
-    button.setImage(Bundle.bmftCommon_IMG("prime_close_icon"),
+    button.setImage(UIImage(systemName: "xmark"),
                 for: .normal)
-    button.layerCornerRadius = 17.0
-    button.pressEffectEnable = true
+    button.layer.cornerRadius = 17.0
     return button
   }()
 }

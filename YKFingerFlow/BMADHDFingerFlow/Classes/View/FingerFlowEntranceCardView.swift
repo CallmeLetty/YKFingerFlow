@@ -2,9 +2,9 @@
 // All rights reserved
 // Author: liuyuanyuan@bongmi.com
 
-//import UIComponent
-
 import SnapKit
+import UIKit
+
 public class FingerFlowEntranceCardView: UIView {
   convenience init() {
     self.init(frame: .zero)
@@ -24,16 +24,15 @@ public class FingerFlowEntranceCardView: UIView {
   }
 
   // MARK: - lazy
-  private lazy var mainImageView = UIImageView(image: UIImage(named: "fingerflow_img",
-                                                          in: type(of: self)))
+  private lazy var mainImageView = UIImageView(image: UIImage(named: "fingerflow_img"))
 
   private lazy var bestLabel = {
     let bestLabel = UILabel()
 
     bestLabel.font = UIFont.systemFont(ofSize: 12, weight: .medium)
-    bestLabel.textColor = ColorGuide.normalContent
+      bestLabel.textColor = UIColor.white
     bestLabel.backgroundColor = UIColor(hexString: "#FEE0BF")
-    bestLabel.layerCornerRadius = 12
+    bestLabel.layer.cornerRadius = 12
     bestLabel.textAlignment = .center
     bestLabel.isHidden = true
     return bestLabel
@@ -44,17 +43,17 @@ public class FingerFlowEntranceCardView: UIView {
 
     label.text = "Code.ChallengeFingerflowIntro"
     label.font = UIFont.systemFont(ofSize: 16, weight: .semibold)
-    label.textColor = UIColor.black
+    label.textColor = UIColor.white
     return label
   }()
 
-  private lazy var arrowImageView = UIImageView(image: Bundle.bmftCommon_IMG("complete_arrow_icon"))
+  private lazy var arrowImageView = UIImageView(image: UIImage(systemName: "arrow.right"))
 }
 
 private extension FingerFlowEntranceCardView {
   func setupViews() {
     backgroundColor = UIColor(hexString: "#213358")
-    layerCornerRadius = 12
+      layer.cornerRadius = 12
 
     self.addSubview(mainImageView)
 

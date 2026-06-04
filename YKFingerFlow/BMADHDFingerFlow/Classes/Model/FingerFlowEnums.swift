@@ -3,6 +3,7 @@
 // Author: liuyuanyuan@bongmi.com
 
 ///mport UIComponent
+import UIKit
 
 enum FingerFlowState: String {
   case before // 指示动画循环播放
@@ -100,8 +101,7 @@ enum FingerFlowBackgroundMusic: Int, CaseIterable {
       case .bg_music_spring:        imageStr = "sound_default_spring"
       case .bg_music_ethereal:      imageStr = "sound_default_ethereal"
     }
-    return  UIImage(named: imageStr,
-                    in: FingerFloweBundleUtil.self)
+    return  UIImage(named: imageStr)
   }
 
   var highlightImage: UIImage? {
@@ -117,8 +117,7 @@ enum FingerFlowBackgroundMusic: Int, CaseIterable {
       case .bg_music_spring:        imageStr = "sound_selected_spring"
       case .bg_music_ethereal:      imageStr = "sound_selected_ethereal"
     }
-    return  UIImage(named: imageStr,
-                    in: FingerFloweBundleUtil.self)
+    return  UIImage(named: imageStr)
   }
 
   var title: String {

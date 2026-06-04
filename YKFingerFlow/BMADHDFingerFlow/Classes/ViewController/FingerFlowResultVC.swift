@@ -3,8 +3,6 @@
 // Author: liuyuanyuan@bongmi.com
 
 //import BMADHDCommonResources
-//import UIComponent
-//import BMADHDUIKit
 //import BMADHDStreak
 //import BMSensors
 import SnapKit
@@ -62,7 +60,7 @@ class FingerFlowResultVC: UIViewController {
   private lazy var timeLabel = {
     let timeLabel = UILabel()
 
-    timeLabel.textColor = UIColor.black
+    timeLabel.textColor = UIColor.white
       timeLabel.font = .systemFont(ofSize: 34, weight: .bold)
     timeLabel.numberOfLines = 0
     timeLabel.text = self.model.duration.toSecondTimeString()
@@ -74,7 +72,7 @@ class FingerFlowResultVC: UIViewController {
   private lazy var bestLabel = {
     let bestLabel = UILabel()
 
-    bestLabel.textColor = UIColor.black
+    bestLabel.textColor = UIColor.white
     bestLabel.font = UIFont.systemFont(ofSize: 18, weight: .medium)
     bestLabel.numberOfLines = 0
     let best = model.bestDuration.toSecondTimeString()
@@ -98,15 +96,14 @@ class FingerFlowResultVC: UIViewController {
     let button = UIButton()
 
       button.setImage(.init(systemName: "close"), for: .normal)
-    button.layerCornerRadius = 17.0
-    button.pressEffectEnable = true
+    button.layer.cornerRadius = 17.0
     return button
   }()
 
   private lazy var buttonAnimationView: LottieAnimationView = {
     let animationView = LottieAnimationView(name: "share_button_js",
                                          bundle: FingerFloweBundleUtil.bundle()!)
-    animationView.loopAnimation = true
+      animationView.loopMode = .loop
     animationView.isUserInteractionEnabled = false
     return animationView
   }()
@@ -129,14 +126,14 @@ private extension FingerFlowResultVC {
       let vc = UIActivityViewController(activityItems: [textItem, imageItem, urlItem],
                                         applicationActivities: nil)
 
-      self.view.hud.hideLoading()
+//      self.view.hud.hideLoading()
       vc.popoverPresentationController?.sourceRect = CGRect(x: FrameGuide.screenWidth / 2,
                                                             y: FrameGuide.screenHeight - 70,
                                                             width: 1,
                                                             height: 1)
       vc.popoverPresentationController?.sourceView = self.view
       vc.popoverPresentationController?.permittedArrowDirections = .down
-      self.presentVC(vc)
+      self.present(vc, animated: true)
     }
   }
 

@@ -2,6 +2,9 @@
 // All rights reserved
 // Author: liuyuanyuan@bongmi.com
 
+import UIKit
+import Foundation
+
 public struct FingerFlowHistoryVM {
   var best: FingerFlowSingleHistoryVM
   var list: [FingerFlowSingleHistoryVM]

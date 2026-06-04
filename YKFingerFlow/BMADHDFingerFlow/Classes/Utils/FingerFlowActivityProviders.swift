@@ -2,9 +2,9 @@
 // All rights reserved
 // Author: liuyuanyuan@bongmi.com
 
-//import UIComponent
 //import BMUserBusinessLib
 //import BMBaseWidgetLib
+import UIKit
 
 class FingerFlowShareImageProvider: UIActivityItemProvider {
   private(set) var image: UIImage?

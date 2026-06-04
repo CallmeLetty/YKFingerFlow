@@ -4,8 +4,8 @@
 
 //import BMTUploadToolsLib
 //import BMUserBusinessLib
-//import UIComponent
-//import BMSensors
+import UIKit
+import Foundation
 import AVFAudio
 import Photos
 import SnapKit
@@ -65,14 +65,14 @@ extension FingerFlowVC {
   func _onStateUpdate() {
     switch gameState {
       case .before:
-        let hiddenViews = [titleLabel, guideButton, exitButton, timePicker, musicIcon, imageIcon]
+        let hiddenViews = [titleLabel, timePicker, musicIcon, imageIcon]
         for subview in hiddenViews {
           subview.alpha = 1
         }
         resetData()
         gameView.resetToBefore()
       case .preparation:
-        let hiddenViews = [titleLabel, guideButton, exitButton, timePicker, musicIcon, imageIcon]
+        let hiddenViews = [titleLabel, timePicker, musicIcon, imageIcon]
 
           UIView.animate(withDuration: 0.3) {
             for subview in hiddenViews {
@@ -257,7 +257,7 @@ extension FingerFlowVC {
       return
     }
     pastDuration += 1
-    if pastDuration.intValue % 15 == 0 {
+    if Int(pastDuration) % 15 == 0 {
       gameView.showPrompt(.welldone)
     }
 
@@ -293,53 +293,10 @@ extension FingerFlowVC {
 
   // MARK: - game over handle
   private func screenshotAndUpload() {
-    view.showLoading()
-    screenshotResult { [weak self]  bgImage, shareImage in
-      guard let shareImage = shareImage else {
-        self?.uploadResult(resultImageUrl: nil,
-                           bgImage: bgImage,
-                           shareImage: shareImage)
-        return
-      }
-        // 上传image到aws获取url
-      let task = BMTUploadImageTask(account: AppManager.shared.account!,
-                                    image: shareImage,
-                                    type: .focusImages) { result, error in
-        self?.uploadResult(resultImageUrl: result as? String,
-                           bgImage: bgImage,
-                           shareImage: shareImage)
-      }
-      task?.start()
-    }
   }
 
   private func uploadResult(resultImageUrl: String?,
                             bgImage: UIImage?,
                             shareImage: UIImage?) {
-    let api = FingerFlowUploadResultTask(duration: Float(pastDuration * 1000),
-                                         resultImageUrl: resultImageUrl)
-    api.observable
-      .subscribe(onNext: { [weak self] response in
-
-        self?.view.hideLoading()
-
-        guard response.isSucceed,
-              let data = response.data,
-              let duration = data.duration?.doubleValue,
-              let bestDuration = data.bestDuration?.doubleValue else {
-          self?.gameState = .before
-          return
-        }
-        let vm = FingerFlowResultVM(duration: duration,
-                                    bestDuration: bestDuration,
-                                    image: bgImage,
-                                    shareImage: shareImage)
-        let resultVC = FingerFlowResultVC(result: vm)
-        resultVC.modalPresentationStyle = .overFullScreen
-        self?.presentVC(resultVC)
-
-        self?.gameState = .before
-      })
-      .disposed(by: rxDisposeBag)
   }
 }
