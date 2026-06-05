@@ -8,7 +8,7 @@ import SDWebImage
 extension FingerFlowVC {
   func checkChosenResource() {
       // bg image
-    var imageValue = AppManager.shared.userDiskCache?.getInt(for: KVCacheKey.fingerFlowBgImage) ?? 1
+    let imageValue = AppManager.shared.userDiskCache?.getInt(for: KVCacheKey.fingerFlowBgImage) ?? 1
     let image = FingerFlowBackgroundImage(rawValue: imageValue) ?? .bg_pic1
     currentImage = image
 

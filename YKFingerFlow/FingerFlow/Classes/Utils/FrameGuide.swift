@@ -54,9 +54,11 @@ public struct FrameGuide {
   public static let tabbarHeight: CGFloat = 49
 
   public static var statusBarHeight: CGFloat {
-    let systemHeight = UIApplication.shared.statusBarFrame.height
-    if systemHeight > 0 {
-      return systemHeight
+    let scenes = UIApplication.shared.connectedScenes
+    let windowScene = scenes.first { $0.activationState == .foregroundActive } as? UIWindowScene
+      ?? scenes.compactMap { $0 as? UIWindowScene }.first
+    if let height = windowScene?.statusBarManager?.statusBarFrame.height, height > 0 {
+      return height
     }
     return UIDevice.isIPhoneXSeries ? 44 : 20
   }

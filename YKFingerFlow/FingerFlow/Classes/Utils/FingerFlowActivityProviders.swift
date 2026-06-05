@@ -4,7 +4,7 @@
 
 import UIKit
 
-class FingerFlowShareImageProvider: UIActivityItemProvider {
+final class FingerFlowShareImageProvider: UIActivityItemProvider, @unchecked Sendable {
   private(set) var image: UIImage?
 
   init(shareImage: UIImage?) {
@@ -22,7 +22,7 @@ class FingerFlowShareImageProvider: UIActivityItemProvider {
   }
 }
 
-class FingerFlowShareURLProvider: UIActivityItemProvider {
+final class FingerFlowShareURLProvider: UIActivityItemProvider, @unchecked Sendable {
   init() {
     super.init(placeholderItem: "")
   }

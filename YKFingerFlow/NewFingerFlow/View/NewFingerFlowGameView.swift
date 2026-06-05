@@ -173,12 +173,11 @@ final class NewFingerFlowGameView: UIView {
     self.pathGeneration = generation
     self.duration = duration
     let token = generation
-    pathBuildTask = Task.detached(priority: .userInitiated) { [layout] in
+    // Path build stays on MainActor (layout touches UIKit / FrameGuide); avoids Swift 6 actor isolation error.
+    pathBuildTask = Task(priority: .userInitiated) { [weak self, layout, duration, token] in
       let built = layout.buildProgressPath(duration: duration)
-      await MainActor.run { [weak self] in
-        guard let self, self.pathGeneration == token else { return }
-        self.applyBuiltPath(built.path, strokeStart: built.strokeStartFraction)
-      }
+      guard !Task.isCancelled, let self, self.pathGeneration == token else { return }
+      self.applyBuiltPath(built.path, strokeStart: built.strokeStartFraction)
     }
   }
 

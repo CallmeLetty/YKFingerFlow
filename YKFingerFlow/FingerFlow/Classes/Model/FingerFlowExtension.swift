@@ -250,7 +250,7 @@ extension UIBezierPath {
 
       if (currentLength + path.cgPath.length > wholeLengthWithoutStart) {
         let leftLength = wholeLengthWithoutStart - currentLength
-        let angle = (leftLength / (Double.pi * 2 * nextRadius)) * 180 / .pi
+//        let angle = (leftLength / (Double.pi * 2 * nextRadius)) * 180 / .pi
         let lastPath = UIBezierPath(start: nextStart,
                                     center: nextCenter,
                                     radius: nextRadius,
