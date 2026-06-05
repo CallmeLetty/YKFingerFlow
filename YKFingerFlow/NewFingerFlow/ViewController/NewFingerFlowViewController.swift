@@ -36,7 +36,7 @@ public final class NewFingerFlowViewController: UIViewController {
     let label = UILabel()
     label.font = .systemFont(ofSize: 24, weight: .semibold)
     label.textColor = .white
-    label.text = "Fingerflow挑战"
+    label.text = "FingerFlow挑战"
     label.numberOfLines = 0
     return label
   }()

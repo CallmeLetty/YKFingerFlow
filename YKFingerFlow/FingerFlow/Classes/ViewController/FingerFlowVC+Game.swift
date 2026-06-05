@@ -176,11 +176,12 @@ extension FingerFlowVC {
         completion?(bgImage, nil)
         return
       }
-      PHPhotoLibrary.shared().performChanges({
-        PHAssetChangeRequest.creationRequestForAsset(from: shareImage)
-      }) { (isSuccess: Bool, error: Error?) in
         completion?(bgImage, shareImage)
-      }
+//      PHPhotoLibrary.shared().performChanges({
+//        PHAssetChangeRequest.creationRequestForAsset(from: shareImage)
+//      }) { (isSuccess: Bool, error: Error?) in
+//        completion?(bgImage, shareImage)
+//      }
     }
   }
 
@@ -291,6 +292,19 @@ extension FingerFlowVC {
 
   // MARK: - game over handle
   private func screenshotAndUpload() {
+      let duration = self.duration
+      screenshotResult { [weak self] bgImage, shareImage in
+          let vm = FingerFlowResultVM(duration: duration,
+                                      bestDuration: duration, // TODO: UNDO 暂时放本次
+                                      image: bgImage,
+                                      shareImage: shareImage)
+          let resultVC = FingerFlowResultVC(result: vm)
+          resultVC.modalPresentationStyle = .overFullScreen
+          self?.navigationController?.pushViewController(resultVC, animated: true)
+          
+          self?.gameState = .before
+      }
+
   }
 
   private func uploadResult(resultImageUrl: String?,

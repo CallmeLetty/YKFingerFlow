@@ -14,7 +14,7 @@ public class FingerFlowEntranceCardView: UIView {
 
   public func updateBestDuration(_ durationString: String) {
     bestLabel.isHidden = false
-    bestLabel.text = "\("Code.SchulteBest2")\(durationString)"
+    bestLabel.text = "最佳：\(durationString)"
 
     bestLabel.sizeToFit()
     let width = bestLabel.bounds.width
@@ -41,7 +41,7 @@ public class FingerFlowEntranceCardView: UIView {
   private lazy var label = {
     let label = UILabel()
 
-    label.text = "Code.ChallengeFingerflowIntro"
+    label.text = "立即开启正念运动"
     label.font = UIFont.systemFont(ofSize: 16, weight: .semibold)
     label.textColor = UIColor.white
     return label

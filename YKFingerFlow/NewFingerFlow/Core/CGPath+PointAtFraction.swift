@@ -50,31 +50,12 @@ private final class CGPathPointSampler {
       current = end
 
     case .addQuadCurveToPoint:
-      let control = points[0]
-      let end = points[1]
-      consumeCurve(samples: curveSamples) { t in
-        let omt = 1 - t
-        return CGPoint(
-          x: omt * omt * current.x + 2 * omt * t * control.x + t * t * end.x,
-          y: omt * omt * current.y + 2 * omt * t * control.y + t * t * end.y
-        )
-      }
-      current = end
+      consumeQuadCurve(control: points[0], end: points[1])
+      current = points[1]
 
     case .addCurveToPoint:
-      let c1 = points[0]
-      let c2 = points[1]
-      let end = points[2]
-      consumeCurve(samples: curveSamples) { t in
-        let omt = 1 - t
-        let omt2 = omt * omt
-        let t2 = t * t
-        return CGPoint(
-          x: omt2 * omt * current.x + 3 * omt2 * t * c1.x + 3 * omt * t2 * c2.x + t2 * t * end.x,
-          y: omt2 * omt * current.y + 3 * omt2 * t * c1.y + 3 * omt * t2 * c2.y + t2 * t * end.y
-        )
-      }
-      current = end
+      consumeCubicCurve(control1: points[0], control2: points[1], end: points[2])
+      current = points[2]
 
     case .closeSubpath:
       consumeSegment(from: current, to: start) { t in
@@ -103,24 +84,53 @@ private final class CGPathPointSampler {
     traversed += segment
   }
 
-  private func consumeCurve(samples: Int, pointAt: (CGFloat) -> CGPoint) {
+  private func consumeQuadCurve(control: CGPoint, end: CGPoint) {
     var previous = current
-    for index in 1...samples {
-      let t = CGFloat(index) / CGFloat(samples)
-      let point = pointAt(t)
-      let step = hypot(point.x - previous.x, point.y - previous.y)
-      if traversed + step >= targetLength, result == nil {
-        let local = step > 0 ? (targetLength - traversed) / step : 0
-        let prevT = CGFloat(index - 1) / CGFloat(samples)
-        result = CGPoint(
-          x: previous.x + (point.x - previous.x) * local,
-          y: previous.y + (point.y - previous.y) * local
-        )
-        _ = prevT
-      }
-      traversed += step
+    for index in 1...curveSamples {
+      let t = CGFloat(index) / CGFloat(curveSamples)
+      let oneMinusT = 1 - t
+      let point = CGPoint(
+        x: oneMinusT * oneMinusT * current.x + 2 * oneMinusT * t * control.x + t * t * end.x,
+        y: oneMinusT * oneMinusT * current.y + 2 * oneMinusT * t * control.y + t * t * end.y
+      )
+      consumeCurveStep(from: previous, to: point)
       previous = point
     }
     current = previous
+  }
+
+  private func consumeCubicCurve(control1: CGPoint, control2: CGPoint, end: CGPoint) {
+    var previous = current
+    for index in 1...curveSamples {
+      let t = CGFloat(index) / CGFloat(curveSamples)
+      let oneMinusT = 1 - t
+      let oneMinusTSquared = oneMinusT * oneMinusT
+      let tSquared = t * t
+      let point = CGPoint(
+        x: oneMinusTSquared * oneMinusT * current.x
+          + 3 * oneMinusTSquared * t * control1.x
+          + 3 * oneMinusT * tSquared * control2.x
+          + tSquared * t * end.x,
+        y: oneMinusTSquared * oneMinusT * current.y
+          + 3 * oneMinusTSquared * t * control1.y
+          + 3 * oneMinusT * tSquared * control2.y
+          + tSquared * t * end.y
+      )
+      consumeCurveStep(from: previous, to: point)
+      previous = point
+    }
+    current = previous
+  }
+
+  private func consumeCurveStep(from previous: CGPoint, to point: CGPoint) {
+    let step = hypot(point.x - previous.x, point.y - previous.y)
+    if traversed + step >= targetLength, result == nil {
+      let local = step > 0 ? (targetLength - traversed) / step : 0
+      result = CGPoint(
+        x: previous.x + (point.x - previous.x) * local,
+        y: previous.y + (point.y - previous.y) * local
+      )
+    }
+    traversed += step
   }
 }

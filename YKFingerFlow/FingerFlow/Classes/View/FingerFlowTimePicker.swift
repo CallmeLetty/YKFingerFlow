@@ -68,8 +68,7 @@ class FingerFlowTimePicker: UIView {
 
     unitLabel.textColor = UIColor.white.withAlphaComponent(0.8)
     unitLabel.font = UIFont.systemFont(ofSize: 12, weight: .medium)
-    unitLabel.text = "选择时间"
-    unitLabel.restorationIdentifier = "Code.FingerflowPrimeMin"
+    unitLabel.text = "分钟"
     return unitLabel
   }()
 

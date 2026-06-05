@@ -52,7 +52,7 @@ class FingerFlowPauseView: UIView {
         
         subTitleLabel.font = UIFont.systemFont(ofSize: 18, weight: .medium)
         subTitleLabel.textColor = UIColor.white
-        subTitleLabel.text = "Code.FingerflowWarningText1"
+        subTitleLabel.text = "Focus FingerFlow，\n提升专注力！"
         subTitleLabel.textAlignment = .center
         subTitleLabel.numberOfLines = 0
         return subTitleLabel
@@ -63,7 +63,7 @@ class FingerFlowPauseView: UIView {
         
         contentLabel.font = UIFont.systemFont(ofSize: 16, weight: .medium)
         contentLabel.textColor = UIColor.white.withAlphaComponent(0.8)
-        contentLabel.text = "Code.FingerflowWarningText2"
+        contentLabel.text = "FingerFlow有助于提高专注力和工作效率！"
         contentLabel.textAlignment = .center
         contentLabel.numberOfLines = 0
         return contentLabel

@@ -49,7 +49,7 @@ class FingerFlowHistoryShareView: UIView {
     let button = UIButton()
 
     button.backgroundColor = UIColor.blue
-    button.setTitle("Code.ChallengeFingerflowPicText3",
+    button.setTitle("分享给好友",
                          for: .normal)
     button.setTitleColor(UIColor(hexString: "#131C41"),
                      for: .normal)

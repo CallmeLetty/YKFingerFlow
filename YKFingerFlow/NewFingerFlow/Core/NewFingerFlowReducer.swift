@@ -46,8 +46,18 @@ struct NewFingerFlowReducer {
       effects = handleClockTick(elapsed: elapsed, duration: duration, snapshot: &next)
 
     case .userTappedExitOnPause:
-      next.phase = .ended
+      next.phase = .before
       effects = enterEndedEffects()
+        
+//        let vm = FingerFlowResultVM(duration: duration,
+//                                                    bestDuration: bestDuration,
+//                                                    image: bgImage,
+//                                                    shareImage: shareImage)
+//                        let resultVC = FingerFlowResultVC(result: vm)
+//                        resultVC.modalPresentationStyle = .overFullScreen
+//                        self?.presentVC(resultVC)
+//
+//                        self?.gameState = .before
 
     case .userTappedContinueOnPause:
       next.phase = .resumeWaiting

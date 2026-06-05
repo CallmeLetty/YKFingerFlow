@@ -48,7 +48,7 @@ final class NewFingerFlowPauseOverlay: UIView {
     let label = UILabel()
     label.font = .systemFont(ofSize: 18, weight: .medium)
     label.textColor = .white
-    label.text = "Code.FingerflowWarningText1"
+    label.text = "Focus FingerFlow，\n提升专注力！"
     label.textAlignment = .center
     label.numberOfLines = 0
     return label
@@ -58,7 +58,7 @@ final class NewFingerFlowPauseOverlay: UIView {
     let label = UILabel()
     label.font = .systemFont(ofSize: 16, weight: .medium)
     label.textColor = UIColor.white.withAlphaComponent(0.8)
-    label.text = "Code.FingerflowWarningText2"
+    label.text = "FingerFlow有助于提高专注力和工作效率！"
     label.textAlignment = .center
     label.numberOfLines = 0
     return label

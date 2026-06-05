@@ -38,11 +38,7 @@ enum FingerFlowBackgroundImage: Int, CaseIterable {
   var index: Int {
     return FingerFlowBackgroundImage.allCases.firstIndex(of: self) ?? 0
   }
-
-  var trackName: String {
-    return "pic\(index + 1)"
-  }
-
+    
   var imageUrlString: String {
     switch self {
       case .bg_pic1: return "https://s.bongmi.cn/push/imgs/8e0c19d6915b2d26def7de815b7cf725.png"
@@ -72,20 +68,6 @@ enum FingerFlowBackgroundMusic: Int, CaseIterable {
 
   var index: Int {
     return FingerFlowBackgroundMusic.allCases.firstIndex(of: self) ?? 1
-  }
-
-  var trackName: String {
-    switch self {
-      case .bg_music_none:          return "No music"
-      case .bg_music_dreamstate:    return "Dreamstate"
-      case .bg_music_galaxy:        return "Galaxy"
-      case .bg_music_moon:          return "Moon"
-      case .bg_music_crystal:       return "Crystal"
-      case .bg_music_rain:          return "Rain"
-      case .bg_music_origin:        return "Origin"
-      case .bg_music_spring:        return "Spring"
-      case .bg_music_ethereal:      return "Ethereal"
-    }
   }
 
   var normalImage: UIImage? {
@@ -122,15 +104,15 @@ enum FingerFlowBackgroundMusic: Int, CaseIterable {
 
   var title: String {
     switch self {
-      case .bg_music_none:          return "Code.Bgmusic0"
-      case .bg_music_dreamstate:    return "Code.Bgmusic1"
-      case .bg_music_galaxy:        return "Code.Bgmusic2"
-      case .bg_music_moon:          return "Code.Bgmusic3"
-      case .bg_music_crystal:       return "Code.Bgmusic4"
-      case .bg_music_rain:          return "Code.Bgmusic5"
-      case .bg_music_origin:        return "Code.Bgmusic6"
-      case .bg_music_spring:        return "Code.Bgmusic7"
-      case .bg_music_ethereal:      return "Code.Bgmusic8"
+      case .bg_music_none:          return "无声"
+      case .bg_music_dreamstate:    return "梦境"
+      case .bg_music_galaxy:        return "星系"
+      case .bg_music_moon:          return "月亮"
+      case .bg_music_crystal:       return "水晶"
+      case .bg_music_rain:          return "雨声"
+      case .bg_music_origin:        return "本源"
+      case .bg_music_spring:        return "春意"
+      case .bg_music_ethereal:      return "空灵"
     }
   }
 
@@ -159,9 +141,9 @@ enum FingerFlowPropmptType {
   var localizedText: String {
     switch self {
       case .place:      return "手指长按发光圆心3s启动"
-      case .keep:       return "Code.FingerflowBeforetrainingText1"
-      case .welldone:   return "Code.FingerflowTrainingText1"
-      case .completing: return "Code.FingerflowEndingText1"
+      case .keep:       return "请将手指靠近圆环。"
+      case .welldone:   return "做得好！继续加油！"
+      case .completing: return "你即将完成训练目标！"
     }
   }
 }

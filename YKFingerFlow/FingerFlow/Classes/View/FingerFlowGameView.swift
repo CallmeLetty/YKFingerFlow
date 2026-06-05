@@ -255,7 +255,7 @@ class FingerFlowGameView: UIView {
 
     preparationLabel.font = UIFont.systemFont(ofSize: 22, weight: .semibold)
     preparationLabel.textColor = UIColor.white
-    preparationLabel.text = "Code.FingerflowBeforetrainingText2"
+    preparationLabel.text = "准备"
     preparationLabel.textAlignment = .center
     preparationLabel.numberOfLines = 0
     preparationLabel.alpha = 0
@@ -303,7 +303,7 @@ class FingerFlowGameView: UIView {
 
     completingLabel.font = UIFont.systemFont(ofSize: 18, weight: .medium)
     completingLabel.textColor = UIColor.white.withAlphaComponent(0.8)
-    completingLabel.text = "Code.FingerflowEndingText1"
+    completingLabel.text = "你即将完成训练目标！"
     completingLabel.textAlignment = .center
     completingLabel.numberOfLines = 0
     completingLabel.alpha = 0

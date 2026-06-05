@@ -44,7 +44,7 @@ class FingerFloweShareUtil {
       let label = UILabel()
       label.textColor = UIColor.white
       label.font = UIFont.systemFont(ofSize: 16, weight: .medium)
-      label.text = "Code.ChallengeFingerflowPicText1"
+      label.text = "专注训练时长"
       return label
     }()
 
@@ -62,7 +62,7 @@ class FingerFloweShareUtil {
       let label = UILabel()
       label.textColor = UIColor.white
       label.font = UIFont.systemFont(ofSize: 14, weight: .semibold)
-      label.text = "Code.ChallengeFingerflowPicText4"
+      label.text = "Focus - ADHD 专注教练"
       return label
     }()
 
@@ -70,7 +70,7 @@ class FingerFloweShareUtil {
       let label = UILabel()
       label.textColor = .white.withAlphaComponent(0.6)
       label.font = UIFont.systemFont(ofSize: 11, weight: .bold)
-      label.text = "Code.ChallengeFingerflowPicText2"
+      label.text = "和我一起提升专注！"
       return label
     }()
 

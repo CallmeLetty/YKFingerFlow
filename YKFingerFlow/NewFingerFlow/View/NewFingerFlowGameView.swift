@@ -62,7 +62,7 @@ final class NewFingerFlowGameView: UIView {
     let label = UILabel()
     label.font = .systemFont(ofSize: 22, weight: .semibold)
     label.textColor = .white
-    label.text = "Code.FingerflowBeforetrainingText2"
+    label.text = "准备"
     label.textAlignment = .center
     label.numberOfLines = 0
     label.alpha = 0
