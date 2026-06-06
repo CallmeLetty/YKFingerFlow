@@ -87,7 +87,7 @@ public class FingerFlowVC: UIViewController {
         let v = UILabel()
         v.font = .systemFont(ofSize: 24, weight: .semibold)
         v.textColor = UIColor.white
-        v.text = "手指流挑战"
+        v.text = "FingerFlow挑战"
         v.numberOfLines = 0
         return v
     }()

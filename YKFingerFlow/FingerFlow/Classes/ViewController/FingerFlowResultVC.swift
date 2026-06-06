@@ -60,7 +60,7 @@ class FingerFlowResultVC: UIViewController {
     timeLabel.textColor = UIColor.white
       timeLabel.font = .systemFont(ofSize: 34, weight: .bold)
     timeLabel.numberOfLines = 0
-    timeLabel.text = self.model.duration.toSecondTimeString()
+    timeLabel.text = TimeInterval(self.model.duration * 1000).toSecondTimeString()
     return timeLabel
   }()
 
@@ -72,7 +72,7 @@ class FingerFlowResultVC: UIViewController {
     bestLabel.textColor = UIColor.white
     bestLabel.font = UIFont.systemFont(ofSize: 18, weight: .medium)
     bestLabel.numberOfLines = 0
-    let best = model.bestDuration.toSecondTimeString()
+    let best = TimeInterval(model.bestDuration * 1000).toSecondTimeString()
     bestLabel.text = "最棒\(best)"
     return bestLabel
   }()

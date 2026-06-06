@@ -2,7 +2,7 @@
 
 import Foundation
 
-// MARK: - Game phase (mirrors FingerFlowState, owned by reducer)
+// MARK: - Game phase阶段 (mirrors FingerFlowState, owned by reducer)
 
 enum NewFingerFlowPhase: String, Equatable {
   case before
@@ -74,6 +74,7 @@ enum NewFingerFlowEffect: Equatable {
   case rebuildPath(seed: UInt64, duration: TimeInterval)
   /// Restore guide dot on path after pause sheet dismiss (legacy `resumeFromPauseWaiting`).
   case prepareResumeWaitingUI(elapsed: TimeInterval, duration: TimeInterval)
+  case enterResult
 }
 
 struct NewFingerFlowSnapshot: Equatable {

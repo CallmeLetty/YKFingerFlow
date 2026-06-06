@@ -46,18 +46,9 @@ struct NewFingerFlowReducer {
       effects = handleClockTick(elapsed: elapsed, duration: duration, snapshot: &next)
 
     case .userTappedExitOnPause:
-      next.phase = .before
-      effects = enterEndedEffects()
-        
-//        let vm = FingerFlowResultVM(duration: duration,
-//                                                    bestDuration: bestDuration,
-//                                                    image: bgImage,
-//                                                    shareImage: shareImage)
-//                        let resultVC = FingerFlowResultVC(result: vm)
-//                        resultVC.modalPresentationStyle = .overFullScreen
-//                        self?.presentVC(resultVC)
-//
-//                        self?.gameState = .before
+      next.phase = .ended
+      next.elapsed = snapshot.elapsed
+      effects = [.applyPhase(.ended)] + enterEndedEffects()
 
     case .userTappedContinueOnPause:
       next.phase = .resumeWaiting
@@ -66,8 +57,6 @@ struct NewFingerFlowReducer {
         .removePauseOverlay,
         .prepareResumeWaitingUI(elapsed: snapshot.elapsed, duration: snapshot.duration),
         .scalePutDotOut,
-        .showPrompt(.place),
-        .runGuideLoop,
       ]
 
     case .appEnteredBackground:
@@ -102,16 +91,10 @@ struct NewFingerFlowReducer {
     case (.preparation, .none), (.preparation, .outside):
       return resetEffects(duration: snapshot.duration)
 
-    case (.running, .none):
-      return pauseFromRunning(snapshot: snapshot, prompt: .place)
-
-    case (.running, .outside):
+    case (.running, .none), (.running, .outside):
       return pauseFromRunning(snapshot: snapshot, prompt: .keep)
 
-    case (.resumeGrace, .none):
-      return pauseFromRunning(snapshot: snapshot, prompt: .place)
-
-    case (.resumeGrace, .outside):
+    case (.resumeGrace, .none), (.resumeGrace, .outside):
       return pauseFromRunning(snapshot: snapshot, prompt: .keep)
 
     case (.resumeWaiting, .inside):
@@ -124,16 +107,17 @@ struct NewFingerFlowReducer {
       ]
 
     case (.resumeWaiting, .none):
-      return [.showPrompt(.place)]
+      return [.stopGuideLoop, .showPrompt(.place)]
 
     case (.resumeWaiting, .outside):
-      return [.showPrompt(.keep)]
+      return [.stopGuideLoop, .showPrompt(.keep)]
 
     case (.pauseGrace, .inside):
       var list: [NewFingerFlowEffect] = [
         .applyPhase(.resumeGrace),
         .stopPauseHaptic,
         .scalePutDotOut,
+        .hidePrompt,
         .resumePathPlayback,
       ]
       if snapshot.duration - snapshot.elapsed <= completingLeadSeconds {
@@ -171,7 +155,8 @@ struct NewFingerFlowReducer {
 
     if elapsed >= duration {
       snapshot.phase = .ended
-      return enterEndedEffects() + [.applyPhase(.ended)]
+      snapshot.elapsed = elapsed
+      return [.applyPhase(.ended)] + enterEndedEffects()
     }
 
     let second = Int(elapsed)
@@ -196,7 +181,7 @@ struct NewFingerFlowReducer {
     switch snapshot.phase {
     case .running, .resumeGrace:
       snapshot.phase = .pauseGrace
-      return pauseFromRunning(snapshot: snapshot, prompt: .place)
+      return pauseFromRunning(snapshot: snapshot, prompt: .keep)
     case .preparation:
       snapshot.phase = .before
       return resetEffects(duration: snapshot.duration)
@@ -209,11 +194,7 @@ struct NewFingerFlowReducer {
     [
       .applyPhase(.before),
       .showSetupChrome,
-      .stopGuideLoop,
       .pausePathPlayback,
-      .rebuildPath(seed: UInt64.random(in: .min ... .max), duration: duration),
-      .runGuideLoop,
-      .hidePrompt,
       .scalePutDotOut,
       .removePauseOverlay,
       .stopPauseHaptic,
@@ -247,6 +228,7 @@ struct NewFingerFlowReducer {
       .pausePathPlayback,
       .removePauseOverlay,
       .hidePrompt,
+      .enterResult,
     ]
   }
 }

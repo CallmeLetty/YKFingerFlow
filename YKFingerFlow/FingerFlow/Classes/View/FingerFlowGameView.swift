@@ -113,12 +113,17 @@ class FingerFlowGameView: UIView {
       make.bottom.equalTo(159 - bounds.height)
     }
     promptLabel.layer.removeAllAnimations()
+    putDot.layer.removeAllAnimations()
+    putDot.layer.transform = CATransform3DIdentity
+    putDot.transform = .identity
     drawCircleList()
   }
 
   func startPreparation(_ promptType: FingerFlowPropmptType) {
     promptLabel.text = promptType.localizedText
     putDot.layer.removeAllAnimations()
+    putDot.layer.transform = CATransform3DIdentity
+    putDot.transform = .identity
     promptLabel.layer.removeAllAnimations()
 
     UIView.animate(withDuration: 0.3) { [weak self] in
@@ -203,6 +208,8 @@ class FingerFlowGameView: UIView {
   func animateBeforeGame() {
     putDot.layer.removeAllAnimations()
     promptLabel.layer.removeAllAnimations()
+    putDot.layer.transform = CATransform3DIdentity
+    putDot.transform = .identity
 
     promptLabel.alpha = 1
     let keyAnimate = CAKeyframeAnimation(keyPath: "opacity")
@@ -224,8 +231,9 @@ class FingerFlowGameView: UIView {
     scaleAnimate.autoreverses = false
     scaleAnimate.isRemovedOnCompletion = false // 避免退后台动画消失
     scaleAnimate.repeatCount = MAXFLOAT
+    scaleAnimate.fillMode = .forwards
 
-    putDot.layer.add(keyAnimate, forKey: "putDot.before")
+    putDot.layer.add(scaleAnimate, forKey: "putDot.before")
   }
 
   required init?(coder: NSCoder) {

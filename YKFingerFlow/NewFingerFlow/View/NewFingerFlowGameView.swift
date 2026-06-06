@@ -128,21 +128,42 @@ final class NewFingerFlowGameView: UIView {
     gameLayer?.removeFromSuperlayer()
     gameLayer = nil
     progressPath = nil
+    startLayer.isHidden = false
     startLayer.path = layout.startPath.cgPath
     guideDot.layer.removeAllAnimations()
+    putDot.layer.removeAllAnimations()
     restoreGuideDotConstraints()
+    layoutIfNeeded()
     lastDotCenter = layout.startPoint
+    guideDot.alpha = 1
+    guideDot.isHidden = false
+    putDot.alpha = 1
+    putDot.transform = .identity
     preparationLabel.alpha = 0
     preparationCountLabel.alpha = 0
     completingTimeLabel.alpha = 0
     completingLabel.alpha = 0
-    promptLabel.alpha = 1
-    promptLabel.text = FingerFlowPropmptType.place.localizedText
+    showIdlePrompt()
+    bringSubviewToFront(guideDot)
     runGuideLoop()
   }
 
+  /// Hide on-screen copy before the end-of-game screenshot (must be synchronous; no fade animators).
+  func prepareForScreenshot() {
+    stopGuideLoop()
+    promptAnimator.cancelActive()
+    hideGameplayTextImmediately()
+  }
+
+  func showIdlePrompt() {
+    promptAnimator.cancelActive()
+    promptLabel.text = FingerFlowPropmptType.place.localizedText
+    promptLabel.isHidden = false
+    promptLabel.alpha = 0
+  }
+
   func runGuideLoop() {
-    guideAnimator.start()
+    guideAnimator.start(idlePrompt: FingerFlowPropmptType.place.localizedText)
   }
 
   func stopGuideLoop() {
@@ -151,6 +172,7 @@ final class NewFingerFlowGameView: UIView {
 
   func beginPreparation() {
     stopGuideLoop()
+    promptLabel.isHidden = false
     promptAnimator.appear(label: promptLabel, text: FingerFlowPropmptType.keep.localizedText)
     UIViewPropertyAnimator(duration: 0.3, curve: .easeOut) {
       self.preparationLabel.alpha = 1
@@ -170,20 +192,17 @@ final class NewFingerFlowGameView: UIView {
 
   func rebuildPath(generation: UInt64, duration: TimeInterval) {
     pathBuildTask?.cancel()
-    self.pathGeneration = generation
+    pathBuildTask = nil
+    pathGeneration = generation
     self.duration = duration
-    let token = generation
-    // Path build stays on MainActor (layout touches UIKit / FrameGuide); avoids Swift 6 actor isolation error.
-    pathBuildTask = Task(priority: .userInitiated) { [weak self, layout, duration, token] in
-      let built = layout.buildProgressPath(duration: duration)
-      guard !Task.isCancelled, let self, self.pathGeneration == token else { return }
-      self.applyBuiltPath(built.path, strokeStart: built.strokeStartFraction)
-    }
+    let built = layout.buildProgressPath(duration: duration)
+    applyBuiltPath(built.path, strokeStart: built.strokeStartFraction)
   }
 
   /// Use frame-based layout during play so `center` is not fighting SnapKit (fixes dot vanishing after pause).
   func useManualGuidePositioning() {
     guard !usesManualGuidePositioning else { return }
+    layoutIfNeeded()
     usesManualGuidePositioning = true
     guideDot.snp.removeConstraints()
     guideDot.translatesAutoresizingMaskIntoConstraints = true
@@ -202,19 +221,21 @@ final class NewFingerFlowGameView: UIView {
     applyPlayback(elapsed: elapsed, duration: duration)
     bringSubviewToFront(guideDot)
     layoutIfNeeded()
+    runGuideLoop()
   }
 
   func applyPlayback(elapsed: TimeInterval, duration: TimeInterval) {
     guard let path = progressPath, duration > 0 else { return }
     let t = min(max(elapsed / duration, 0), 1)
-    let fraction = strokeStartFraction + (1 - strokeStartFraction) * CGFloat(t)
-    gameLayer?.strokeEnd = fraction
+    // Line grows from the end of the idle start arc; dot follows from path origin (legacy CAKeyframeAnimation).
+    let strokeFraction = strokeStartFraction + (1 - strokeStartFraction) * CGFloat(t)
+    gameLayer?.strokeEnd = strokeFraction
 
-    let point = path.point(atFraction: fraction)
     if !dotFrozen {
+      let point = path.point(atFraction: CGFloat(t))
       lastDotCenter = point
+      positionGuideDot(at: lastDotCenter)
     }
-    positionGuideDot(at: lastDotCenter)
   }
 
   func freezeGuideDot() {
@@ -229,6 +250,9 @@ final class NewFingerFlowGameView: UIView {
     case .place, .keep:
       completingTimeLabel.alpha = 0
       completingLabel.alpha = 0
+      completingTimeLabel.isHidden = true
+      completingLabel.isHidden = true
+      promptLabel.isHidden = false
       let text = mapPrompt(prompt)
       promptAnimator.appear(label: promptLabel, text: text)
     case .welldone:
@@ -243,7 +267,17 @@ final class NewFingerFlowGameView: UIView {
   }
 
   func hidePrompt() {
-    promptAnimator.disappear(label: promptLabel)
+    promptAnimator.cancelActive()
+    promptLabel.layer.removeAllAnimations()
+    promptLabel.alpha = 0
+  }
+
+  func hideGameplayTextImmediately() {
+    gameplayTextLabels.forEach { label in
+      label.layer.removeAllAnimations()
+      label.alpha = 0
+      label.isHidden = true
+    }
   }
 
   func updateCompletingTime(_ text: String) {
@@ -259,9 +293,9 @@ final class NewFingerFlowGameView: UIView {
 
   func endSession() {
     stopGuideLoop()
-    [preparationLabel, preparationCountLabel, guideDot, putDot, promptLabel, completingTimeLabel, completingLabel].forEach {
-      $0.alpha = 0
-    }
+    promptAnimator.cancelActive()
+    hideGameplayTextImmediately()
+    [guideDot, putDot].forEach { $0.alpha = 0 }
   }
 
   /// P1: hit test from clock-sampled center, not `presentation()` frame.
@@ -274,6 +308,10 @@ final class NewFingerFlowGameView: UIView {
 // MARK: - Private
 
 private extension NewFingerFlowGameView {
+
+  var gameplayTextLabels: [UILabel] {
+    [preparationLabel, preparationCountLabel, promptLabel, completingTimeLabel, completingLabel]
+  }
 
   func setupViews() {
     backgroundColor = .clear
@@ -330,6 +368,7 @@ private extension NewFingerFlowGameView {
     strokeStartFraction = strokeStart
     useManualGuidePositioning()
     gameLayer?.removeFromSuperlayer()
+    startLayer.isHidden = true
 
     let layer = CAShapeLayer()
     layer.strokeColor = UIColor.systemBlue.cgColor
@@ -339,8 +378,10 @@ private extension NewFingerFlowGameView {
     layer.lineJoin = .round
     layer.path = path
     layer.strokeEnd = strokeStart
-    self.gameLayer = layer
+    gameLayer = layer
     self.layer.addSublayer(layer)
+    lastDotCenter = path.point(atFraction: 0)
+    positionGuideDot(at: lastDotCenter)
     bringSubviewToFront(guideDot)
   }
 

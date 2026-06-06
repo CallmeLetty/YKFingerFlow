@@ -1,5 +1,4 @@
 // Copyright (c) 2026, YKFingerFlow
-// P0: putDot uses scale loop (legacy bug applied opacity keyframe to putDot).
 // P3: UIViewPropertyAnimator + keyframes instead of infinite CAKeyframeAnimation.
 
 import UIKit
@@ -19,9 +18,10 @@ final class NewFingerFlowGuideAnimator {
     self.putDot = putDot
   }
 
-  func start() {
+  func start(idlePrompt: String) {
     guard !isRunning else { return }
     isRunning = true
+    promptLabel?.text = idlePrompt
     promptLabel?.alpha = 0
     putDot?.transform = CGAffineTransform(scaleX: 0.01, y: 0.01)
     runPromptCycle()
@@ -36,7 +36,6 @@ final class NewFingerFlowGuideAnimator {
     putAnimator = nil
     promptLabel?.layer.removeAllAnimations()
     putDot?.layer.removeAllAnimations()
-    promptLabel?.alpha = 1
     putDot?.transform = .identity
   }
 
@@ -70,7 +69,7 @@ final class NewFingerFlowGuideAnimator {
     fadeIn.startAnimation()
   }
 
-  // MARK: - Put dot scale 0 → 1 → 0 → 1 → 0 (4s loop) — P0 fix
+  // MARK: - Put dot scale 0 → 1 → 0 → 1 → 0 (4s loop)
 
   private func runPutDotCycle() {
     guard isRunning, let dot = putDot else { return }

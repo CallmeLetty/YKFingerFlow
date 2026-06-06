@@ -55,7 +55,7 @@ class ViewController: UIViewController {
         navigationController?.pushViewController(fingerFlowVC, animated: true)
     }
     @objc private func enterNewFingerFlowTapped() {
-        let fingerFlowVC = FingerFlowVC()
+        let fingerFlowVC = NewFingerFlowViewController()
         navigationController?.pushViewController(fingerFlowVC, animated: true)
     }
 

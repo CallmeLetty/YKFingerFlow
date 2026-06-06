@@ -292,7 +292,7 @@ extension FingerFlowVC {
 
   // MARK: - game over handle
   private func screenshotAndUpload() {
-      let duration = self.duration
+      let duration = self.pastDuration
       screenshotResult { [weak self] bgImage, shareImage in
           let vm = FingerFlowResultVM(duration: duration,
                                       bestDuration: duration, // TODO: UNDO 暂时放本次
