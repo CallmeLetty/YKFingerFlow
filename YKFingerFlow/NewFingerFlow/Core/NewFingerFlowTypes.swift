@@ -32,9 +32,20 @@ enum NewFingerFlowPress: Equatable {
 
 enum NewFingerFlowPrompt: Equatable {
   case place
+  case pausePlace
   case keep
   case welldone
   case completing
+    
+    var localizedText: String {
+      switch self {
+      case .place:      return FingerFlowPropmptType.place.localizedText
+      case .pausePlace: return FingerFlowPropmptType.pausePlace.localizedText
+      case .keep:       return FingerFlowPropmptType.keep.localizedText
+      case .welldone:   return FingerFlowPropmptType.welldone.localizedText
+      case .completing: return FingerFlowPropmptType.completing.localizedText
+      }
+    }
 }
 
 // MARK: - Reducer I/O

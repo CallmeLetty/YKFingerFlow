@@ -364,7 +364,7 @@ private extension NewFingerFlowViewController {
     view.addSubview(titleLabel)
     titleLabel.snp.makeConstraints { make in
       make.top.equalTo(35 + FrameGuide.safeAreaBottomHeight)
-      make.left.equalTo(20)
+        make.centerX.equalToSuperview()
     }
 
     timePicker = FingerFlowTimePicker(

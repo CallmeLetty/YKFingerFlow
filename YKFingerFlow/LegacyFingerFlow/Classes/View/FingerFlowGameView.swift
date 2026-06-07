@@ -155,14 +155,7 @@ class FingerFlowGameView: UIView {
 
   func showPrompt(_ promptType: FingerFlowPropmptType) {
     switch promptType {
-      case .place:
-        completingLabel.alpha = 0
-        completingTimeLabel.alpha = 0
-
-        promptLabel.layer.removeAllAnimations()
-        promptLabel.text = promptType.localizedText
-        promptLabel.animateAppear()
-      case .keep:
+    case .place, .keep, .pausePlace:
         completingLabel.alpha = 0
         completingTimeLabel.alpha = 0
 

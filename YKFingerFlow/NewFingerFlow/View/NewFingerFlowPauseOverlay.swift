@@ -48,7 +48,7 @@ final class NewFingerFlowPauseOverlay: UIView {
     let label = UILabel()
     label.font = .systemFont(ofSize: 18, weight: .medium)
     label.textColor = .white
-    label.text = "Focus FingerFlow，\n提升专注力！"
+    label.text = "太棒了！"
     label.textAlignment = .center
     label.numberOfLines = 0
     return label

@@ -26,7 +26,7 @@ extension FingerFlowVC: FingerFlowGameViewDelegate {
         }
       case .start, .resumeFromPauseCountdown, .resumeFromPauseRunning:
         if state == .none {
-          gameView.showPrompt(.place)
+          gameView.showPrompt(.pausePlace)
         } else if state == .outside {
           gameView.showPrompt(.keep)
         } else {

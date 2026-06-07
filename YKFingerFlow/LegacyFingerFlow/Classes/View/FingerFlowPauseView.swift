@@ -52,7 +52,7 @@ class FingerFlowPauseView: UIView {
         
         subTitleLabel.font = UIFont.systemFont(ofSize: 18, weight: .medium)
         subTitleLabel.textColor = UIColor.white
-        subTitleLabel.text = "Focus FingerFlow，\n提升专注力！"
+        subTitleLabel.text = "太棒了！"
         subTitleLabel.textAlignment = .center
         subTitleLabel.numberOfLines = 0
         return subTitleLabel

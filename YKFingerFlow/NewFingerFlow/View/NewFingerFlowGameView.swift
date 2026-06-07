@@ -247,16 +247,16 @@ final class NewFingerFlowGameView: UIView {
 
   func showPrompt(_ prompt: NewFingerFlowPrompt) {
     switch prompt {
-    case .place, .keep:
+    case .place, .pausePlace, .keep:
       completingTimeLabel.alpha = 0
       completingLabel.alpha = 0
       completingTimeLabel.isHidden = true
       completingLabel.isHidden = true
       promptLabel.isHidden = false
-      let text = mapPrompt(prompt)
+        let text = prompt.localizedText
       promptAnimator.appear(label: promptLabel, text: text)
     case .welldone:
-      promptAnimator.welldonePulse(label: promptLabel, text: mapPrompt(prompt))
+        promptAnimator.welldonePulse(label: promptLabel, text: prompt.localizedText)
     case .completing:
       promptAnimator.showCompleting(
         timeLabel: completingTimeLabel,
@@ -383,15 +383,6 @@ private extension NewFingerFlowGameView {
     lastDotCenter = path.point(atFraction: 0)
     positionGuideDot(at: lastDotCenter)
     bringSubviewToFront(guideDot)
-  }
-
-  func mapPrompt(_ prompt: NewFingerFlowPrompt) -> String {
-    switch prompt {
-    case .place: return FingerFlowPropmptType.place.localizedText
-    case .keep: return FingerFlowPropmptType.keep.localizedText
-    case .welldone: return FingerFlowPropmptType.welldone.localizedText
-    case .completing: return FingerFlowPropmptType.completing.localizedText
-    }
   }
 
   func restoreGuideDotConstraints() {

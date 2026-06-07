@@ -36,7 +36,7 @@ struct NewFingerFlowReducer {
     case .pauseGraceSecondElapsed(let remaining):
       next.pauseGraceRemaining = remaining
 
-    case .pauseGraceFinished:
+    case .pauseGraceFinished: // 暂停倒计时结束，弹窗
       next.phase = .paused
       next.pauseGraceRemaining = pauseGraceSeconds
       effects = enterPausedEffects(snapshot: next)
@@ -95,7 +95,7 @@ struct NewFingerFlowReducer {
       return pauseFromRunning(snapshot: snapshot, prompt: .keep)
 
     case (.resumeGrace, .none), (.resumeGrace, .outside):
-      return pauseFromRunning(snapshot: snapshot, prompt: .keep)
+      return pauseFromRunning(snapshot: snapshot, prompt: .pausePlace)
 
     case (.resumeWaiting, .inside):
       return [
@@ -107,7 +107,7 @@ struct NewFingerFlowReducer {
       ]
 
     case (.resumeWaiting, .none):
-      return [.stopGuideLoop, .showPrompt(.place)]
+      return [.stopGuideLoop, .showPrompt(.pausePlace)]
 
     case (.resumeWaiting, .outside):
       return [.stopGuideLoop, .showPrompt(.keep)]
