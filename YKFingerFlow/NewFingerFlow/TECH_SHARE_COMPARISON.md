@@ -1,6 +1,4 @@
-# FingerFlow 动画架构对比（Legacy vs NewFingerFlow）
-
-> 一页技术分享用示意图 · 2026
+# FingerFlow 动画架构对比（Legacy vs New）
 
 ## 1. 总览：从「三时钟 + 分散 switch」到「单时钟 + Reducer」
 
@@ -68,7 +66,7 @@ Legacy 两条 CA 动画 **duration 故意设为不同**：
 
 ### 2.2 计时引擎：Timer vs CADisplayLink（主进度时钟）
 
-> **范围**：本节对比的是 **主游戏进度**——Legacy 的 `gameTimer` vs New 的 `masterClock`。  
+> **范围**：对比的是 **主游戏进度**——Legacy 的 `gameTimer` vs New 的 `masterClock`。  
 > 准备 3s、暂停宽限 5s 等 **离散倒计时**，Legacy 仍用 `Timer`，New 用 `NewFingerFlowCountdownClock`（Task），两边思路相近，不在此表。
 
 #### 机制对比
@@ -364,9 +362,9 @@ New touch
 | **P3** | 技术 | UI 微动效 | CABasicAnimation 样板 | `UIViewPropertyAnimator` / 弹簧 |
 | **P3** | 技术 | 离散倒计时 | Timer selector | `NewFingerFlowCountdownClock`（Task） |
 
-## 7. 分享时可强调的要点
+## 7. 优化要点总结
 
-**技术向（用户/QA 能测）**
+**技术向**
 
 1. **Timer → DisplayLink** — 主进度从 1 Hz Timer 改为 ~60 Hz Δt；业务与画面共用 `elapsed`（§2.2）。
 2. **线点同源** — 同一 `elapsed` 驱动 `strokeEnd` 与 `path.point(atFraction:)`，消除 Legacy 双线不同速（§2.8.1）。
@@ -374,11 +372,9 @@ New touch
 4. **暂停简化** — 停 DisplayLink 即可，不再同步 Timer fireDate 与 CALayer beginTime（§2.8.2）。
 5. **PropertyAnimator 引导** — 可中断循环、退后台 teardown 比 `isRemovedOnCompletion=false` 更清晰（§2.8.4）。
 
-**架构向（团队/engineering）**
+**架构向**
 
 6. **Master Clock 模式** — 音游/冥想类 App 通用解法，可接 SwiftUI `TimelineView`。
-7. **Reducer + Effect** — 转移表可单测，便于画状态图给 QA/设计。
+7. **Reducer + Effect** — 转移表可单测，便于画状态图给 QA。
 
 ---
-
-*文件位置：`YKFingerFlow/NewFingerFlow/` · 入口：`NewFingerFlowViewController`*
