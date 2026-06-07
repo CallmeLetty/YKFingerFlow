@@ -141,7 +141,7 @@ enum FingerFlowPropmptType {
     var localizedText: String {
         switch self {
         case .place:      return "手指长按发光圆心3s启动"
-        case .pausePlace:      return "手指长按发光圆心重新启动"
+        case .pausePlace: return "手指长按发光圆心重新启动"
         case .keep:       return "请将手指靠近圆环。"
         case .welldone:   return "做得好！继续加油！"
         case .completing: return "你即将完成训练目标！"
