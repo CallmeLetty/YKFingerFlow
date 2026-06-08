@@ -1,37 +1,42 @@
-# FingerFlow：一根手指的修行之路
+# FingerFlow
 
-> 这是一份「人话版」说明。  
-> 想查接口、对照表、迁移清单，请去 `[Optimization.md](Optimization.md)`。
+## 这游戏在玩什么？
 
----
-
-## 这游戏到底在玩什么？
-
-想象你用手指按住屏幕中央一颗发光的小圆点。  
+想象用手指按住屏幕中央一颗发光的小圆点。  
 三秒倒计时过后，它会带着你，沿着一条**随机弯弯曲曲的轨迹**在屏幕上爬行——像一条被猫拨乱的毛线，又像你在黑暗中摸墙找开关。
 
-规则极简，残忍也极简：
+规则极简：
 
 - **跟住它**。圆点动，你的手指也得动。
-- **别松手，也别跑偏**。手指离圆心超过大约 **55pt**，游戏立刻喊停——「你人呢？」
-- **撑满你选的时长**。路径总长约 `时长 × 15` 像素/秒；跟完全程，进结果页，看你能坚持多久。
+- **别松手，也别跑偏**。手指离圆心超过大约 **55pt**，游戏立刻暂停【New · `NewFingerFlowGameView.containsTouchNearGuide(_:threshold:)`，默认 55】
+- **撑满选择的时长**。路径总长约 `时长 × 15` 像素/秒；跟完全程，进结果页，看你能坚持多久。【`speedPerSecond = 15` · Legacy `FingerFlowGameView` / New `NewFingerFlowPathLayout`】
 
-开局前你会选挑战时长、背景图、BGM。  
-长按圆心 **3 秒**启动；中途暂停后，文案会变成「手指长按发光圆心**继续**」——细节虽小，体验很要紧。
+```swift
+// Legacy  FingerFlowGameView.swift
+var lengthNeededToRun: Double { Double(duration) * speedPerSecond }  // speedPerSecond = 15
 
-中间偶尔蹦出「做得好！继续加油！」——不是系统夸你，是系统在确认：**你还活着，还在线上**。
+// New  NewFingerFlowPathBuilder.swift
+let lengthNeeded = CGFloat(duration * speedPerSecond)
+```
 
-说白了：**这不是反应力游戏，是专注力 + 耐心 + 微操稳定性的修行。**
+开局前会选挑战时长、背景图、BGM。  
+长按圆心 **3 秒**启动【Legacy `startPreparation` · New `beginPreparationUI` → `startPreparationCountdown()`】；
+
+中途暂停后，文案会变成「手指长按发光圆心**继续**」【`FingerFlowPropmptType.pausePlace`】——细节虽小，体验很要紧。
+
+中间偶尔蹦出「做得好！继续加油！」等鼓励。【Legacy `FingerFlowVC+Game.gameTimerAction` 每 15s · New `NewFingerFlowReducer.handleClockTick`，`welldoneInterval = 15`】
+
+练习**专注力 + 耐心 + 微操稳定性。**
 
 ---
 
-## 路径从哪来？——设计的巧思
+## 路径计算
 
 路径不是设计师手绘的，是算法「掷骰子」掷出来的：
 
-1. **起手式**：圆心先画一段约 **120°** 的起始弧，把手指从静止「拽」进轨道。
-2. **随机链**：后面接一串随机半径、随机角度的圆弧，左拐右拐，直到总长度够格。
-3. **长度预算**：`目标长度 = 你选的秒数 × 15`。秒数越长，弯越多、路越远。
+1. **起手式**：圆心先画一段约 **120°** 的起始弧，把手指从静止「拽」进轨道。【`NewFingerFlowPathLayout.make()`，`angle: 120`】
+2. **随机链**：后面接一串随机半径、随机角度的圆弧，左拐右拐，直到总长度够格。【Legacy `FingerFlowExtension.subPaths()` · New `NewFingerFlowSubPathGenerator.generate()`】
+3. **长度预算**：`目标长度 = 你选的秒数 × 15`。秒数越长，弯越多、路越远。【`wholeLengthWithoutStart` / `lengthNeeded`】
 
 视觉上像蛇在爬；工程上像**用圆弧拼出一条可计算的曲线**——既能画出来，也能算出「走到 37% 时手指该在哪」。
 
@@ -45,121 +50,135 @@ Legacy 和 New 解决这个矛盾的方式，气质完全不同。
 
 ## Legacy：交给 Core Animation 的「黑盒托管」
 
-2023 年的实现，思路很 iOS、很务实：**让 CA 帮你干活**。
+2023 年的实现，思路比较务实：**让 CA 干活**。
 
 ### 状态：到处都在改
 
-`gameState` 散落在 ViewController、Timer 回调、通知里。  
+`gameState` 散落在 ViewController、Timer 回调、通知里。【`FingerFlowVC.gameState` · `FingerFlowVC+Game.swift`】  
 谁都能推一把状态机——像多人同时扶一个醉汉过马路，能走，但没人说得清下一步踩哪块砖。
 
 ### 时间：两套钟表
 
-- **业务钟**：`Timer`，每秒跳一次，管倒计时、结束、welldone。
-- **画面钟**：`CAShapeLayer` 的 `strokeEnd` 动画 + 圆点的 `position` 关键帧，`.paced` 沿路径匀速。（见`drawCircleList()`）
+- **业务钟**：`Timer`，每秒跳一次，管倒计时、结束、welldone。【`FingerFlowVC+Game.startTimer(.game)` → `gameTimerAction`】
+- **画面钟**：`CAShapeLayer` 的 `strokeEnd` 动画 + 圆点的 `position` 关键帧，`.paced` 沿路径匀速。【见 `FingerFlowGameView.drawCircleList()`】
 
-理论上两条时间轴该对齐；实际上 **Timer 走秒、动画走帧**，暂停时还要给 Layer 灌 `speed = 0`——**两套暂停 API，两套心跳**。  
+```swift
+// FingerFlowGameView.drawCircleList()
+gameLayer.add(CABasicAnimation(keyPath: "strokeEnd"), forKey: "Move")   // 线
+circleAnimation.calculationMode = .paced                                  // 点沿路径匀速
+guideDot.layer.add(circleAnimation, forKey: "Move")
+```
+
+理论上两条时间轴该对齐；实际上 **Timer 走秒、动画走帧**，暂停时还要给 Layer 灌 `speed = 0`【`CALayer.pauseAnimation()` · `FingerFlowExtension.swift`；`FingerFlowGameView.pause()`】——**两套暂停 API，两套心跳**。  
 进度条和业务里程碑偶尔「各想各的」，排查起来像查灵异事件。
 
 ### 路径：后台算，前台演
 
-准备阶段的 3 秒里，后台线程 `calculatePoints`，把路径点算好。  
-开跑后 `drawCircleList` 挂上 Layer，启动双动画：
+准备阶段的 3 秒里，后台线程 `calculatePoints`，把路径点算好。【`FingerFlowGameView.calculatePoints()` → `startPath.subPaths(...)`】  
+开跑后 `drawCircleList()` 挂上 Layer，启动双动画：
 
-- **线**：`strokeEnd` 从某个起点拉到 1，画出已走过的轨迹。
-- **点**：`position` 沿路径爬，时长还和线不一样——这是**刻意保留的手感**（线先「画出来」，点有自己的节奏）。
+- **线**：`strokeEnd` 从某个起点拉到 1，画出已走过的轨迹。【`fromValue = startPath.cgPath.length / lengthNeededToRun`】
+- **点**：`position` 沿路径爬，时长还和线不一样——这是**刻意保留的手感**（线先「画出来」，点有自己的节奏）。【`dotDuration = duration + startPath.cgPath.length / 15`】
 
-圆点具体在哪？问 `presentationLayer`。【见`@objc func longPressGuideDot(recognizer: UILongPressGestureRecognizer)】`  
+圆点具体在哪？问 `presentationLayer`。【见 `FingerFlowGameView.longPressGuideDot(recognizer:)`】
+
+```swift
+guard let guideFrame = guideDot.layer.presentation()?.frame else { ... }
+pressState = guideFrame.contains(point) ? .inside : .outside
+```
+
 那是 Core Animation 的**黑盒插值**，好看，但 debug 时你只能对着空气猜：「它为什么瞬移了？」
 
 ### 命中：问 Layer「你现在在哪」
 
-手指是否跟住圆点？Legacy 看的是 `presentation()?.frame` 矩形区域。  
+手指是否跟住圆点？Legacy 看的是 `presentation()?.frame` 矩形区域。【同上 `longPressGuideDot`】  
 暂停瞬间、动画边界、插值误差——都可能让判定和眼睛看到的差半拍。
-
-### 一句话画像
-
-> Legacy 像一个经验丰富的魔术师：台上精彩，幕布后面绳子缠成什么样，观众不知道，魔术师有时也懒得掀帘。
 
 ---
 
-## New：把魔法拆开，自己摆点
+## New：自己摆点
 
-2026 年的重构没有改玩法，改的是**谁掌握真相**。
+### 状态：Reducer 管理
 
-### 状态：Reducer 当交通警察
-
-所有变化走 `send(Event) → Reducer → [Effect]`。  
-ViewController 只负责「照单执行」——不再到处 `switch gameState`。  
-状态图能画、单测能写、QA 能对着表点：从 `preparation` 到 `running` 到 `paused`，每条路有编号。
+所有变化走 `send(Event) → Reducer → [Effect]`。【`NewFingerFlowViewController.send(_:)` → `NewFingerFlowReducer.send(_:snapshot:)`】  
+ViewController 只负责「照单执行」`apply(effects)`——不再到处 `switch gameState`。  
+状态图能画、单测能写、QA 能对着表点：从 `preparation` 到 `running` 到 `paused`，每条路有编号。【`NewFingerFlowPhase` · `NewFingerFlowReducer.handlePress`】
 
 ### 时间：一根主钟
 
-`NewFingerFlowMasterClock` 用 `CADisplayLink` 维护唯一的 `elapsed`。
+`NewFingerFlowMasterClock` 用 `CADisplayLink` 维护唯一的 `elapsed`。【`NewFingerFlowMasterClock.swift`】
 
-每一帧：
+每一帧【`NewFingerFlowViewController.masterClock(_:didTick:duration:)`】：
 
-1. `applyPlayback(elapsed)` —— 根据进度摆线的 `strokeEnd`、摆圆点的位置。
-2. `masterClockTick` —— 同一 `elapsed` 判断是否 welldone、是否该结束。
+1. `applyPlayback(elapsed)` —— 根据进度摆线的 `strokeEnd`、摆圆点的位置。【`NewFingerFlowGameView.applyPlayback(elapsed:duration:)`】
+2. `masterClockTick` —— 同一 `elapsed` 判断是否 welldone、是否该结束。【`NewFingerFlowReducer.handleClockTick`】
 
-**业务和画面共用一个时间戳。** 暂停？`suspend()`，冻住 `elapsed`。继续？从同一帧接着走。  
+**业务和画面共用一个时间戳。** 暂停？【`masterClock.suspend()`】冻住 `elapsed`。继续？【`masterClock.resume()`】从同一帧接着走。  
 没有「Timer 说你该结束了，但圆点还在半路」这种分裂人格。
 
 ### 路径：Seed、公式、裁切
 
-`NewFingerFlowSubPathGenerator` 用 **seed** 掷骰子——同 seed 同路径，便于排查复现 bug。
+`NewFingerFlowSubPathGenerator` 用 **seed** 掷骰子——同 seed 同路径，便于排查复现 bug。【`generate(..., seed:)` · `SeededRNG` · Debug 结果页 `pathSeed`】
 
-段长不用折线近似，生成时就算 `半径 × 弧度`。  
-最后一段如果超预算，不整段重掷，而是**按剩余长度裁角度**——路长更贴 `duration × 15`，不会「差一截」或「多绕半天」。
+段长不用折线近似，生成时就算 `半径 × 弧度`。【`attemptGenerate`：`radius * angle / 180 * .pi`】  
+最后一段如果超预算，不整段重掷，而是**按剩余长度裁角度**——路长更贴 `duration × 15`：
+
+```swift
+// NewFingerFlowSubPathGenerator.attemptGenerate()
+angle = max(remaining / radius * 180 / .pi, 1)  // 末段裁切
+```
+
+路径在开局拼好。【`NewFingerFlowPathBuilder.buildProgressPath` → `NewFingerFlowGameView.rebuildPath(generation:duration:)`】
 
 ### 弧长表：只建一次
 
 `NewFingerFlowArcLengthPath` 在构建期沿路径走一遍，存一张 knot 表：  
-「总长的 42% 对应坐标 (x, y)」。
+「总长的 42% 对应坐标 (x, y)」。【`NewFingerFlowArcLengthPath.make(from:pathOrigin:)`】
 
-运行时圆点位置 = **查表**，O(1) 均摊，带 `hintIndex` 顺序访问更快。  
-线的 `strokeFraction`、点的 `dotT` 仍保持 Legacy 那套**双线节奏**——手感延续，但规则写在代码里，不是埋在 CA 肚子里。
+运行时圆点位置 = **查表**【`point(atFraction:hintIndex:)`】，O(1) 均摊，带 `hintIndex` 顺序访问更快。  
+线的 `strokeFraction`、点的 `dotT` 仍保持 Legacy 那套**双线节奏**——手感延续，但规则写在代码里：
 
-圆心显示、命中检测、查表坐标**同源**。  
-判定是 `hypot(触摸点, lastDotCenter) ≤ 55` 的圆，不是问 Layer「你猜我在哪」。
+```swift
+// NewFingerFlowGameView.applyPlayback()
+let strokeFraction = strokeStartFraction + (1 - strokeStartFraction) * CGFloat(t)
+let dotT = elapsed / (duration + startArcLength / 15)
+let point = built.arcLengthPath.point(atFraction: CGFloat(dotT), hintIndex: &arcLengthHintIndex)
+```
+
+圆心显示、命中检测、查表坐标**同源**（`lastDotCenter`）。  
+判定是 `hypot(触摸点, lastDotCenter) ≤ 55` 的圆【`containsTouchNearGuide`】，不是问 Layer「你猜我在哪」。
 
 ### 动效：PropertyAnimator 接力
 
-引导手指的呼吸圈、文案淡入淡出，从无限循环的 `CAKeyframeAnimation` 换成 `UIViewPropertyAnimator` 链。  
-好停、好接、好换文案——暂停恢复时显示 `pausePlace`，不再误用开局的 `place`。
-
-### 一句话画像
-
-> New 像把魔术拆成说明书：台上还是那条蛇形路径，但幕后每一帧的坐标，都是你自己写进 `applyPlayback` 的。
+引导手指的呼吸圈、文案淡入淡出，从无限循环的 `CAKeyframeAnimation` 换成 `UIViewPropertyAnimator` 链。【`NewFingerFlowGuideAnimator` · `NewFingerFlowPromptAnimator`】  
+好停、好接、好换文案——暂停恢复时显示 `pausePlace`【`prepareResumeWaiting(elapsed:duration:)`】，不再误用开局的 `place`。
 
 ---
 
-## New VS Legacy更可控
+## New VS Legacy 更可控
 
 
-| 你关心的       | Legacy 的感受         | New 的升级                    |
-| ---------- | ------------------ | -------------------------- |
-| **跟手**     | CA 插值，大多时候顺滑       | 同样顺滑，且每帧坐标可查、可 log         |
-| **时长准度**   | Timer 与动画可能漂       | 一个 `elapsed` 说了算           |
-| **路径长度**   | 末段常「将就」            | 裁切末段，更贴目标长度                |
-| **复现 bug** | 随机路径，难复现           | seed 固定，同一局能再打一遍           |
-| **暂停**     | Timer 停 + Layer 冻结 | 冻 `elapsed`，语义干净           |
-| **命中判定**   | 问 presentation 矩形  | 几何圆，与圆心坐标一致                |
-| **改规则**    | 动 CA 配置，心里没底       | 改 `applyPlayback` 几行，所见即所得 |
-| **维护**     | 状态散落多文件            | Reducer 一张表，Effect 列副作用    |
+| 你关心的       | Legacy 的感受         | New 的升级                    | 代码出处                                           |
+| ---------- | ------------------ | -------------------------- | ---------------------------------------------- |
+| **跟手**     | CA 插值，大多时候顺滑       | 同样顺滑，且每帧坐标可查、可 log         | `drawCircleList` / `applyPlayback`             |
+| **时长准度**   | Timer 与动画可能漂       | 一个 `elapsed` 说了算           | `gameTimerAction` / `NewFingerFlowMasterClock` |
+| **路径长度**   | 末段常「将就」            | 裁切末段，更贴目标长度                | `subPaths` / `attemptGenerate`                 |
+| **复现 bug** | 随机路径，难复现           | seed 固定，同一局能再打一遍           | `SeededRNG` · Debug `pathSeed`                 |
+| **暂停**     | Timer 停 + Layer 冻结 | 冻 `elapsed`，语义干净           | `pause` + `pauseAnimation` / `suspend`         |
+| **命中判定**   | 问 presentation 矩形  | 几何圆，与圆心坐标一致                | `longPressGuideDot` / `containsTouchNearGuide` |
+| **改规则**    | 动 CA 配置，心里没底       | 改 `applyPlayback` 几行，所见即所得 | `applyPlayback`                                |
+| **维护**     | 状态散落多文件            | Reducer 一张表，Effect 列副作用    | `NewFingerFlowReducer`                         |
 
 
-玩家未必感知得到这些——**这正是成功的重构**
+玩家未必感知得到这些——**这正是成功的重构**。
 
 ---
 
 ## 总结
 
 1. **设计**：用随机圆弧拼出一条「刚好够长」的蛇形路，考验手指能不能全程贴住圆点。
-2. **Legacy**：路径算好交给 CA，双时钟、黑盒插值、状态四散——能玩，难查。
-3. **New**：路径仍随机，但 **seed 可复现、弧长可建表、进度一根钟、摆点自己写**——手感继承，真相归代码。
-
-Legacy 没动，New 在旁边并行。Demo 里蓝色按钮是旧江湖，粉色按钮是新修行。  
-同一根手指，同一条弯路，不同的幕后——**从「相信魔法」到「魔法是你写的」**。
+2. **Legacy**：路径算好交给 CA，双时钟、黑盒插值、状态四散——能玩，难查。【`FingerFlowGameView.swift` · `FingerFlowVC+Game.swift`】
+3. **New**：路径仍随机，但 **seed 可复现、弧长可建表、进度一根钟、摆点自己写**——手感继承，真相归代码。【`NewFingerFlow/` 目录】
 
 ---
 
