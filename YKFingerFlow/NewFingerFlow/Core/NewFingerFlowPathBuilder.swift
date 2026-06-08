@@ -1,4 +1,4 @@
-// Copyright (c) 2026, YKFingerFlow — path construction with seeded generator + precomputed arc-length table.
+// Copyright (c) 2026, YKFingerFlow — 带种子生成器与预计算弧长表的路径构建。
 
 import UIKit
 

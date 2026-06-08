@@ -2,7 +2,6 @@
 // All rights reserved
 // Author: liuyuanyuan@bongmi.com
 
-///mport UIComponent
 import UIKit
 
 enum FingerFlowState: String {

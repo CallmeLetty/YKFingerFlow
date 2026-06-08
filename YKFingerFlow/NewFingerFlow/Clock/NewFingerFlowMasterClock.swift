@@ -1,4 +1,4 @@
-// Copyright (c) 2026, YKFingerFlow — P1: single elapsed timeline (display link + pause accumulation).
+// Copyright (c) 2026, YKFingerFlow — P1：单一 elapsed 时间轴（DisplayLink + 暂停累计）。
 
 import QuartzCore
 import UIKit
@@ -8,7 +8,7 @@ protocol NewFingerFlowMasterClockDelegate: AnyObject {
   func masterClockDidReachDuration(_ clock: NewFingerFlowMasterClock)
 }
 
-/// Drives game progress, milestone prompts, and path sampling from one `elapsed` value.
+/// 用单一 `elapsed` 驱动游戏进度、里程碑提示与路径采样。
 final class NewFingerFlowMasterClock {
 
   weak var delegate: NewFingerFlowMasterClockDelegate?
@@ -44,7 +44,7 @@ final class NewFingerFlowMasterClock {
     lastTimestamp = nil
   }
 
-  /// Freezes timeline without clearing elapsed (game pause / grace).
+  /// 冻结时间轴但不清零 elapsed（游戏暂停 / 宽限期）。
   func suspend() {
     pause()
   }
@@ -73,7 +73,7 @@ final class NewFingerFlowMasterClock {
   }
 }
 
-// MARK: - Secondary discrete clocks (preparation / pause grace)
+// MARK: - 辅助离散时钟（准备 / 暂停宽限）
 
 final class NewFingerFlowCountdownClock {
 

@@ -7,7 +7,7 @@
 import CoreGraphics
 
 extension CGSize {
-  /// Scales proportionally so the width matches `targetWidth`.
+  /// 等比缩放使宽度匹配 `targetWidth`。
   func geometricScale(width targetWidth: CGFloat) -> CGSize {
     guard width > 0 else { return self }
     let scale = targetWidth / width

@@ -18,7 +18,7 @@ final class DiskCache {
     fileDirectory = nil
   }
 
-  /// File-backed cache for binary payloads keyed by URL string.
+  /// 以 URL 字符串为键的文件二进制缓存。
   init(fileNamespace: String) {
     keyPrefix = "DiskCache.\(fileNamespace)."
     defaults = UserDefaults.standard

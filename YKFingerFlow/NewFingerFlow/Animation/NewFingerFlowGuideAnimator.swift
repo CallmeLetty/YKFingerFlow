@@ -1,9 +1,9 @@
 // Copyright (c) 2026, YKFingerFlow
-// P3: UIViewPropertyAnimator + keyframes instead of infinite CAKeyframeAnimation.
+// P3：用 UIViewPropertyAnimator + 关键帧替代无限 CAKeyframeAnimation。
 
 import UIKit
 
-/// Idle guide loop before the game starts.
+/// 开局前的引导待机循环。
 final class NewFingerFlowGuideAnimator {
 
   private weak var promptLabel: UILabel?
@@ -39,7 +39,7 @@ final class NewFingerFlowGuideAnimator {
     putDot?.transform = .identity
   }
 
-  // MARK: - Prompt opacity 0 → 1 → 1 → 0 (5s loop)
+  // MARK: - 提示透明度 0 → 1 → 1 → 0（5 秒循环）
 
   private func runPromptCycle() {
     guard isRunning, let label = promptLabel else { return }
@@ -69,7 +69,7 @@ final class NewFingerFlowGuideAnimator {
     fadeIn.startAnimation()
   }
 
-  // MARK: - Put dot scale 0 → 1 → 0 → 1 → 0 (4s loop)
+  // MARK: - 按压圆点缩放 0 → 1 → 0 → 1 → 0（4 秒循环）
 
   private func runPutDotCycle() {
     guard isRunning, let dot = putDot else { return }

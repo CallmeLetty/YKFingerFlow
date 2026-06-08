@@ -1,8 +1,6 @@
 //
 //  UIColor+Hex.swift
 //  YKFingerFlow
-//
-//  From UIComponent/UIColorExtensions.swift
 
 import UIKit
 

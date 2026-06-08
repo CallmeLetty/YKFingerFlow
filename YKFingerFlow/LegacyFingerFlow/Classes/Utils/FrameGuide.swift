@@ -1,6 +1,5 @@
 //
 //  FrameGuide.swift
-//  UIComponent
 //
 //  Created by hanl001 on 2020/5/28.
 //  Copyright © 2020 XiaoYu. All rights reserved.

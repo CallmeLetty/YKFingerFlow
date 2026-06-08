@@ -1,4 +1,4 @@
-// Copyright (c) 2026, YKFingerFlow — game surface driven by master clock + property animators.
+// Copyright (c) 2026, YKFingerFlow — 由主时钟与属性动画驱动的游戏界面。
 
 import SnapKit
 import UIKit
@@ -121,7 +121,7 @@ final class NewFingerFlowGameView: UIView {
     self.duration = duration
   }
 
-  // MARK: - Effects surface (called by VC)
+  // MARK: - Effect 执行面（由 VC 调用）
 
   func resetToBefore() {
     pathBuildTask?.cancel()
@@ -150,7 +150,7 @@ final class NewFingerFlowGameView: UIView {
     runGuideLoop()
   }
 
-  /// Hide on-screen copy before the end-of-game screenshot (must be synchronous; no fade animators).
+  /// 局末截图前隐藏屏幕文案（须同步执行，不用淡出动画）。
   func prepareForScreenshot() {
     stopGuideLoop()
     promptAnimator.cancelActive()
@@ -197,13 +197,13 @@ final class NewFingerFlowGameView: UIView {
     pathBuildTask = nil
     pathGeneration = generation
     self.duration = duration
-    // Synchronous apply so `beginPathPlayback` in the same effect batch sees a ready path and
-    // the guide dot stays at path origin (fraction 0), not the end of the idle start arc.
+    // 同步应用，使同批 Effect 中的 `beginPathPlayback` 能看到就绪路径，
+    // 引导圆点停在路径起点（fraction 0），而非待机起始弧末端。
     let built = layout.buildProgressPath(duration: duration, seed: generation)
     applyBuiltPath(built)
   }
 
-  /// Use frame-based layout during play so `center` is not fighting SnapKit (fixes dot vanishing after pause).
+  /// 游戏中用手动 frame 布局，避免 `center` 与 SnapKit 冲突（修复暂停后圆点消失）。
   func useManualGuidePositioning() {
     guard !usesManualGuidePositioning else { return }
     layoutIfNeeded()
@@ -215,7 +215,7 @@ final class NewFingerFlowGameView: UIView {
     guideDot.center = preservedCenter
   }
 
-  /// Legacy `resumeFromPauseWaiting`: show guide on path + idle pulse until user presses again.
+  /// 对应 Legacy `resumeFromPauseWaiting`：在路径上显示引导圆点并播放待机动画，直至用户再次按压。
   func prepareResumeWaiting(elapsed: TimeInterval, duration: TimeInterval) {
     stopGuideLoop()
     guideDot.alpha = 1
@@ -234,7 +234,7 @@ final class NewFingerFlowGameView: UIView {
   func applyPlayback(elapsed: TimeInterval, duration: TimeInterval) {
     guard let built = builtPath, duration > 0 else { return }
     let t = min(max(elapsed / duration, 0), 1)
-    // strokeEnd grows from the idle start arc; dot uses legacy paced duration along the full path.
+    // strokeEnd 从待机起始弧起增长；圆点沿全路径使用 Legacy 的 paced 时长。
     let strokeFraction = strokeStartFraction + (1 - strokeStartFraction) * CGFloat(t)
     gameLayer?.strokeEnd = strokeFraction
 
@@ -313,14 +313,14 @@ final class NewFingerFlowGameView: UIView {
     [guideDot, putDot].forEach { $0.alpha = 0 }
   }
 
-  /// P1: hit test from clock-sampled center, not `presentation()` frame.
+  /// P1：用时钟采样的圆心做命中检测，而非 `presentation()` 的 frame。
   func containsTouchNearGuide(_ point: CGPoint, threshold: CGFloat = 55) -> Bool {
     let center = dotFrozen ? lastDotCenter : guideDot.center
     return hypot(point.x - center.x, point.y - center.y) <= threshold
   }
 }
 
-// MARK: - Private
+// MARK: - 私有
 
 private extension NewFingerFlowGameView {
 
@@ -429,7 +429,7 @@ private extension NewFingerFlowGameView {
   }
 }
 
-// MARK: - Put dot scale (property animator)
+// MARK: - 按压圆点缩放（属性动画）
 
 private final class NewFingerFlowPutDotScaler {
   private var animator: UIViewPropertyAnimator?

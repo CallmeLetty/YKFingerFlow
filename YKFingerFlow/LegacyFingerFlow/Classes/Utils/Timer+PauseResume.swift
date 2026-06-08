@@ -10,7 +10,7 @@ import ObjectiveC
 private var timerRemainingIntervalKey: UInt8 = 0
 
 extension Timer {
-  /// Pauses firing while keeping the timer valid. No-op if already paused or invalidated.
+  /// 暂停触发但保持 Timer 有效；已暂停或已失效时不操作。
   func pause() {
     guard isValid, fireDate != .distantFuture else { return }
 
@@ -24,7 +24,7 @@ extension Timer {
     fireDate = .distantFuture
   }
 
-  /// Resumes firing from the remaining interval saved by `pause()`.
+  /// 从 `pause()` 保存的剩余间隔恢复触发。
   func resume() {
     guard isValid, fireDate == .distantFuture else { return }
 

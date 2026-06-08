@@ -1,8 +1,6 @@
 //
 //  UIDevice+Frame.swift
 //  YKFingerFlow
-//
-//  Provides isIPhoneXSeries required by FrameGuide (from UIComponent/UIDeviceExt.swift).
 
 import UIKit
 
@@ -14,7 +12,7 @@ extension UIDevice {
     return DispatchQueue.main.sync { computeIsIPhoneXSeries() }
   }
 
-  /// Must run on the main thread.
+  /// 必须在主线程调用。
   private static func computeIsIPhoneXSeries() -> Bool {
     if let bottom = keyWindowSafeAreaBottom {
       return bottom > 0

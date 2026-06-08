@@ -3,9 +3,8 @@
 // Author: liuyuanyuan@bongmi.com
 
 import UIKit
-//import SwiftyFoundation
-
 import SnapKit
+
 protocol FingerFlowGameViewDelegate: NSObjectProtocol {
   func onPressStateUpdate(_ state: FingerFlowPressState)
   func onPreparationCountdownEnd()

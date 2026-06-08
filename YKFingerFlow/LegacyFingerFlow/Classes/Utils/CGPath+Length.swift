@@ -7,7 +7,7 @@
 import CoreGraphics
 
 extension CGPath {
-  /// Approximate total length by summing line segments and sampled curves.
+  /// 通过累加线段与采样曲线近似总长度。
   var length: CGFloat {
     let calculator = CGPathLengthCalculator()
     applyWithBlock { element in

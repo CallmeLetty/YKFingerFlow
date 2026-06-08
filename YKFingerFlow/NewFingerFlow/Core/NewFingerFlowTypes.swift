@@ -1,8 +1,8 @@
-// Copyright (c) 2026, YKFingerFlow — NewFingerFlow module (legacy code untouched).
+// Copyright (c) 2026, YKFingerFlow — NewFingerFlow 模块（未改动 Legacy 代码）。
 
 import Foundation
 
-// MARK: - Game phase阶段 (mirrors FingerFlowState, owned by reducer)
+// MARK: - 游戏阶段（对应 FingerFlowState，由 Reducer 持有）
 
 enum NewFingerFlowPhase: String, Equatable {
   case before
@@ -48,7 +48,7 @@ enum NewFingerFlowPrompt: Equatable {
     }
 }
 
-// MARK: - Reducer I/O
+// MARK: - Reducer 输入输出
 
 enum NewFingerFlowEvent: Equatable {
   case pressChanged(NewFingerFlowPress)
@@ -83,7 +83,7 @@ enum NewFingerFlowEffect: Equatable {
   case startPauseHaptic
   case stopPauseHaptic
   case rebuildPath(seed: UInt64, duration: TimeInterval)
-  /// Restore guide dot on path after pause sheet dismiss (legacy `resumeFromPauseWaiting`).
+  /// 暂停弹层关闭后把引导圆点恢复到路径上（对应 Legacy `resumeFromPauseWaiting`）。
   case prepareResumeWaitingUI(elapsed: TimeInterval, duration: TimeInterval)
   case enterResult
 }

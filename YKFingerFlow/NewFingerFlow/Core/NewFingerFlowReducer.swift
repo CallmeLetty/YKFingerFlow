@@ -1,4 +1,4 @@
-// Copyright (c) 2026, YKFingerFlow — P2: explicit transition table + single `send` entry.
+// Copyright (c) 2026, YKFingerFlow — P2：显式转移表与单一 `send` 入口。
 
 import Foundation
 
@@ -73,7 +73,7 @@ struct NewFingerFlowReducer {
         return (next, effects)
     }
     
-    // MARK: - Transition table (press × phase)
+    // MARK: - 转移表（按压 × 阶段）
     
     private func handlePress(
         _ press: NewFingerFlowPress,

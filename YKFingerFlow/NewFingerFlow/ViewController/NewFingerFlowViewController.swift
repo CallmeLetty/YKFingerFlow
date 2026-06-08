@@ -1,4 +1,4 @@
-// Copyright (c) 2026, YKFingerFlow — orchestrates reducer + master clock + game view.
+// Copyright (c) 2026, YKFingerFlow — 协调 Reducer、主时钟与游戏视图。
 
 import AVFAudio
 import AudioToolbox
@@ -8,8 +8,8 @@ import SDWebImage
 import SnapKit
 import UIKit
 
-/// Entry point for the refactored FingerFlow experience.
-/// Wire from host app without editing legacy `FingerFlowVC`:
+/// 重构版 FingerFlow 的入口。
+/// 宿主 App 无需修改 Legacy `FingerFlowVC` 即可接入：
 /// `navigationController?.pushViewController(NewFingerFlowViewController(), animated: true)`
 public final class NewFingerFlowViewController: UIViewController {
 
@@ -21,7 +21,7 @@ public final class NewFingerFlowViewController: UIViewController {
   /// 游戏状态的单一真相源（phase、elapsed、press 等）；每次 `send` 后由 Reducer 更新。
   private var snapshot = NewFingerFlowSnapshot()
 
-  /// 主时钟（CADisplayLink）：用唯一 `elapsed` 驱动路径 strokeEnd、圆点位置、welldone/结束判定；暂停时 suspend，恢复时 resume。
+  /// 主时钟（CADisplayLink）：用唯一 `elapsed` 驱动路径 strokeEnd、圆点位置、welldone/结束判定；暂停时挂起，恢复时继续。
   private let masterClock = NewFingerFlowMasterClock()
 
   /// 辅助倒计时：开局准备 3s，tick 发 `preparationSecondElapsed`，结束发 `preparationFinished`；不参与路径进度。
@@ -98,7 +98,7 @@ public final class NewFingerFlowViewController: UIViewController {
   }
 }
 
-// MARK: - Reducer bridge
+// MARK: - Reducer 桥接
 
 private extension NewFingerFlowViewController {
 
@@ -243,7 +243,7 @@ private extension NewFingerFlowViewController {
     view.setNeedsLayout()
     view.layoutIfNeeded()
 
-    // Wait one run loop so drawHierarchy sees the hidden labels.
+    // 等待一个 RunLoop，确保 drawHierarchy 能截到已隐藏文案的界面。
     DispatchQueue.main.async { [weak self] in
       guard let self else {
         completion(nil, nil)
@@ -395,7 +395,7 @@ private extension NewFingerFlowViewController {
   }
 }
 
-// MARK: - Delegates
+// MARK: - 代理
 
 extension NewFingerFlowViewController: NewFingerFlowGameViewDelegate {
 

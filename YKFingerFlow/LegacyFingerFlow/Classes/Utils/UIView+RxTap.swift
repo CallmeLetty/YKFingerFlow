@@ -3,7 +3,7 @@ import RxSwift
 import UIKit
 
 extension Reactive where Base: UIView {
-  /// Adds a tap gesture recognizer to the view and exposes its events.
+  /// 为视图添加点击手势并暴露其事件。
   func tapGesture() -> ControlEvent<UITapGestureRecognizer> {
     let gesture = UITapGestureRecognizer()
     base.isUserInteractionEnabled = true

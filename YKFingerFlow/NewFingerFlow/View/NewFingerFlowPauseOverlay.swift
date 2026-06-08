@@ -1,4 +1,4 @@
-// Copyright (c) 2026, YKFingerFlow — pause UI (standalone; does not modify FingerFlowPauseView).
+// Copyright (c) 2026, YKFingerFlow — 暂停界面（独立实现，不修改 FingerFlowPauseView）。
 
 import SnapKit
 import UIKit

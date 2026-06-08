@@ -1,4 +1,4 @@
-// Copyright (c) 2026, YKFingerFlow — result of one-off path construction.
+// Copyright (c) 2026, YKFingerFlow — 单次路径构建结果。
 
 import CoreGraphics
 import UIKit

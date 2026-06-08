@@ -1,4 +1,4 @@
-// Copyright (c) 2026, YKFingerFlow — P3: interruptible prompt transitions.
+// Copyright (c) 2026, YKFingerFlow — P3：可中断的提示过渡动画。
 
 import UIKit
 

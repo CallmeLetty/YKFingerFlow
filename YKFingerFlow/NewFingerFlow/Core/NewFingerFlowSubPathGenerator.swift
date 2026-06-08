@@ -1,4 +1,4 @@
-// Copyright (c) 2026, YKFingerFlow — seeded path generation with analytical arc length (New-only).
+// Copyright (c) 2026, YKFingerFlow — 带解析弧长的种子路径生成（仅 New）。
 
 import UIKit
 
@@ -98,7 +98,7 @@ enum NewFingerFlowSubPathGenerator {
   }
 }
 
-// MARK: - Seeded RNG
+// MARK: - 带种子的随机数
 
 struct SeededRNG: RandomNumberGenerator {
   private var state: UInt64

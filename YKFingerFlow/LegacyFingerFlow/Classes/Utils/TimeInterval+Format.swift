@@ -6,7 +6,7 @@
 import Foundation
 
 extension TimeInterval {
-  /// Formats milliseconds as `mm:ss`.
+  /// 将毫秒格式化为 `mm:ss`。
   func toSecondTimeString() -> String {
     let date = Date(timeIntervalSince1970: self / 1000)
     let formatter = DateFormatter()
@@ -14,7 +14,7 @@ extension TimeInterval {
     return formatter.string(from: date)
   }
 
-  /// Formats unix timestamp (seconds) as `yyyy/MM/dd HH:mm:ss`.
+  /// 将 Unix 时间戳（秒）格式化为 `yyyy/MM/dd HH:mm:ss`。
   func toDateString() -> String {
     let date = Date(timeIntervalSince1970: self)
     let formatter = DateFormatter()

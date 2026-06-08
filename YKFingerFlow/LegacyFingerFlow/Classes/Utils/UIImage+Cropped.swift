@@ -7,7 +7,7 @@
 import UIKit
 
 extension UIImage {
-  /// Crops using a rect in point coordinates (same space as `size`).
+  /// 用点坐标系下的矩形裁剪（与 `size` 同一空间）。
   func croppedImage(_ rect: CGRect) -> UIImage? {
     guard rect.width > 0, rect.height > 0, let source = cgImage else { return nil }
 

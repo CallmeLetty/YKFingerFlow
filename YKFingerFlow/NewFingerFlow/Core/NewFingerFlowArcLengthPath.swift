@@ -1,9 +1,9 @@
-// Copyright (c) 2026, YKFingerFlow — precomputed arc-length table for O(log n) runtime sampling.
+// Copyright (c) 2026, YKFingerFlow — 预计算弧长表，运行时 O(log n) 采样。
 
 import CoreGraphics
 import UIKit
 
-/// Built once per session path; `applyPlayback` queries this instead of re-walking `CGPath` every frame.
+/// 每局路径构建一次；`applyPlayback` 查表而非每帧重走 `CGPath`。
 struct NewFingerFlowArcLengthPath {
   let pathOrigin: CGPoint
   let totalLength: CGFloat
@@ -36,7 +36,7 @@ struct NewFingerFlowArcLengthPath {
     return point(atFraction: fraction, hintIndex: &hint)
   }
 
-  /// Pass a persistent `hintIndex` during monotonic playback for near O(1) lookup.
+  /// 单调播放时传入持久 `hintIndex`，近似 O(1) 查找。
   func point(atFraction fraction: CGFloat, hintIndex: inout Int) -> CGPoint {
     let clamped = min(max(fraction, 0), 1)
     guard totalLength > 0, let first = knots.first else { return pathOrigin }
@@ -66,7 +66,7 @@ struct NewFingerFlowArcLengthPath {
   }
 }
 
-// MARK: - Single-pass knot collection
+// MARK: - 单次遍历收集结点
 
 private struct KnotBuilder {
   private(set) var total: CGFloat = 0
