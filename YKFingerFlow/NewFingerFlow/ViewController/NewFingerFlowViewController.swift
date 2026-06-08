@@ -215,13 +215,15 @@ private extension NewFingerFlowViewController {
   }
 
   func presentResultVC(duration: TimeInterval) {
+    let pathSeed = snapshot.pathGeneration
     captureResultImages(duration: duration) { [weak self] bgImage, shareImage in
       guard let self else { return }
       let vm = FingerFlowResultVM(
         duration: duration,
         bestDuration: duration,
         image: bgImage,
-        shareImage: shareImage
+        shareImage: shareImage,
+        pathSeed: pathSeed
       )
       let resultVC = FingerFlowResultVC(result: vm)
       resultVC.modalPresentationStyle = .overFullScreen

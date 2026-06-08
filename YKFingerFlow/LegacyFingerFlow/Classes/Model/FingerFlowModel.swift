@@ -22,16 +22,20 @@ public struct FingerFlowResultVM {
   var bgImage: UIImage?
   var shareImage: UIImage?
   var ifNewRecord: Bool
+  /// NewFingerFlow 本局路径 seed；仅 Debug 结果页展示，Legacy 为 nil
+  var pathSeed: UInt64?
 
   init(duration: Double,
        bestDuration: Double,
        image: UIImage?,
-       shareImage: UIImage?) {
+       shareImage: UIImage?,
+       pathSeed: UInt64? = nil) {
     self.duration = duration
     self.bestDuration = bestDuration
     self.bgImage = image
     self.shareImage = shareImage
     self.ifNewRecord = (duration >= bestDuration)
+    self.pathSeed = pathSeed
   }
 }
 

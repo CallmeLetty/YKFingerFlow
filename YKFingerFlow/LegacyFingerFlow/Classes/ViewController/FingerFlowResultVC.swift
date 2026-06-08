@@ -77,6 +77,20 @@ class FingerFlowResultVC: UIViewController {
     return bestLabel
   }()
 
+  #if DEBUG
+  private lazy var debugPathSeedLabel: UILabel = {
+    let label = UILabel()
+    label.textColor = UIColor.white.withAlphaComponent(0.45)
+    label.font = .monospacedSystemFont(ofSize: 12, weight: .regular)
+    label.textAlignment = .center
+    label.numberOfLines = 0
+    if let seed = model.pathSeed {
+      label.text = "Debug · path seed: \(seed)"
+    }
+    return label
+  }()
+  #endif
+
     private lazy var shareButton = {
         let button = UIButton()
         
@@ -186,6 +200,17 @@ private extension FingerFlowResultVC {
       make.centerX.centerY.equalTo(bestBgImageView)
     
     }
+
+    #if DEBUG
+    if model.pathSeed != nil {
+      view.addSubview(debugPathSeedLabel)
+      debugPathSeedLabel.snp.makeConstraints { make in
+        make.centerX.equalToSuperview()
+        make.left.right.equalToSuperview().inset(20)
+        make.top.equalTo(bestBgImageView.snp.bottom).offset(12)
+      }
+    }
+    #endif
 
     view.addSubview(shareButton)
 
