@@ -14,12 +14,16 @@ Optional: add a second button on the host `ViewController` that pushes `NewFinge
 
 | Folder | Responsibility |
 |--------|----------------|
-| `Core/` | Types, reducer (P2), path builder, `CGPath` sampling |
+| `Core/` | Types, reducer (P2), path builder, sub-path generator, arc-length table |
 | `Clock/` | Master display-link clock (P1), async countdown |
 | `Animation/` | Guide loop (P0+P3), prompt property animators |
 | `View/` | Game surface, pause overlay |
 | `ViewController/` | Effect runner wiring |
 
-## Tech share
+## Optimization
 
-See [TECH_SHARE_COMPARISON.md](./TECH_SHARE_COMPARISON.md).
+See [Optimization.md](../Optimization.md) for Legacy vs New algorithm and usage comparison.
+
+## Design story
+
+See [DesignStory.md](../DesignStory.md) for a narrative overview of the game design and refactor (Chinese).

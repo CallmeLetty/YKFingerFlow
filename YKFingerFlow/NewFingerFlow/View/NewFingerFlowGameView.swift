@@ -17,8 +17,9 @@ final class NewFingerFlowGameView: UIView {
   private let promptAnimator = NewFingerFlowPromptAnimator()
   private let putDotScaler = NewFingerFlowPutDotScaler()
 
-  private var progressPath: CGPath?
+  private var builtPath: NewFingerFlowBuiltPath?
   private var strokeStartFraction: CGFloat = 0
+  private var arcLengthHintIndex = 0
   private var pathGeneration: UInt64 = 0
   private var pathBuildTask: Task<Void, Never>?
   private var duration: TimeInterval = 60
@@ -127,7 +128,8 @@ final class NewFingerFlowGameView: UIView {
     dotFrozen = false
     gameLayer?.removeFromSuperlayer()
     gameLayer = nil
-    progressPath = nil
+    builtPath = nil
+    arcLengthHintIndex = 0
     startLayer.isHidden = false
     startLayer.path = layout.startPath.cgPath
     guideDot.layer.removeAllAnimations()
@@ -162,8 +164,8 @@ final class NewFingerFlowGameView: UIView {
     promptLabel.alpha = 0
   }
 
-  func runGuideLoop() {
-    guideAnimator.start(idlePrompt: FingerFlowPropmptType.place.localizedText)
+  func runGuideLoop(idlePrompt: String = FingerFlowPropmptType.place.localizedText) {
+    guideAnimator.start(idlePrompt: idlePrompt)
   }
 
   func stopGuideLoop() {
@@ -195,18 +197,22 @@ final class NewFingerFlowGameView: UIView {
     pathBuildTask = nil
     pathGeneration = generation
     self.duration = duration
-    let built = layout.buildProgressPath(duration: duration)
-    applyBuiltPath(built.path, strokeStart: built.strokeStartFraction)
+    // Synchronous apply so `beginPathPlayback` in the same effect batch sees a ready path and
+    // the guide dot stays at path origin (fraction 0), not the end of the idle start arc.
+    let built = layout.buildProgressPath(duration: duration, seed: generation)
+    applyBuiltPath(built)
   }
 
   /// Use frame-based layout during play so `center` is not fighting SnapKit (fixes dot vanishing after pause).
   func useManualGuidePositioning() {
     guard !usesManualGuidePositioning else { return }
     layoutIfNeeded()
+    let preservedCenter = guideDot.center
     usesManualGuidePositioning = true
     guideDot.snp.removeConstraints()
     guideDot.translatesAutoresizingMaskIntoConstraints = true
     guideDot.bounds = CGRect(x: 0, y: 0, width: 100, height: 100)
+    guideDot.center = preservedCenter
   }
 
   /// Legacy `resumeFromPauseWaiting`: show guide on path + idle pulse until user presses again.
@@ -218,21 +224,30 @@ final class NewFingerFlowGameView: UIView {
     completingLabel.alpha = 0
     scalePutDotOut()
     useManualGuidePositioning()
+    arcLengthHintIndex = 0
     applyPlayback(elapsed: elapsed, duration: duration)
     bringSubviewToFront(guideDot)
     layoutIfNeeded()
-    runGuideLoop()
+    runGuideLoop(idlePrompt: FingerFlowPropmptType.pausePlace.localizedText)
   }
 
   func applyPlayback(elapsed: TimeInterval, duration: TimeInterval) {
-    guard let path = progressPath, duration > 0 else { return }
+    guard let built = builtPath, duration > 0 else { return }
     let t = min(max(elapsed / duration, 0), 1)
-    // Line grows from the end of the idle start arc; dot follows from path origin (legacy CAKeyframeAnimation).
+    // strokeEnd grows from the idle start arc; dot uses legacy paced duration along the full path.
     let strokeFraction = strokeStartFraction + (1 - strokeStartFraction) * CGFloat(t)
     gameLayer?.strokeEnd = strokeFraction
 
     if !dotFrozen {
-      let point = path.point(atFraction: CGFloat(t))
+      let startArcLength = layout.startRadius * 120 / 180 * .pi
+      let dotDuration = duration + startArcLength / 15
+      let dotT = min(max(elapsed / dotDuration, 0), 1)
+      let point: CGPoint
+      if dotT <= 0 {
+        point = layout.startPoint
+      } else {
+        point = built.arcLengthPath.point(atFraction: CGFloat(dotT), hintIndex: &arcLengthHintIndex)
+      }
       lastDotCenter = point
       positionGuideDot(at: lastDotCenter)
     }
@@ -363,9 +378,10 @@ private extension NewFingerFlowGameView {
     }
   }
 
-  func applyBuiltPath(_ path: CGPath, strokeStart: CGFloat) {
-    progressPath = path
-    strokeStartFraction = strokeStart
+  func applyBuiltPath(_ built: NewFingerFlowBuiltPath) {
+    builtPath = built
+    strokeStartFraction = built.strokeStartFraction
+    arcLengthHintIndex = 0
     useManualGuidePositioning()
     gameLayer?.removeFromSuperlayer()
     startLayer.isHidden = true
@@ -376,13 +392,14 @@ private extension NewFingerFlowGameView {
     layer.lineWidth = 6
     layer.lineCap = .round
     layer.lineJoin = .round
-    layer.path = path
-    layer.strokeEnd = strokeStart
+    layer.path = built.cgPath
+    layer.strokeEnd = built.strokeStartFraction
     gameLayer = layer
     self.layer.addSublayer(layer)
-    lastDotCenter = path.point(atFraction: 0)
-    positionGuideDot(at: lastDotCenter)
+    lastDotCenter = layout.startPoint
+    guideDot.center = layout.startPoint
     bringSubviewToFront(guideDot)
+    applyPlayback(elapsed: 0, duration: duration)
   }
 
   func restoreGuideDotConstraints() {
@@ -398,6 +415,7 @@ private extension NewFingerFlowGameView {
     if !usesManualGuidePositioning {
       useManualGuidePositioning()
     }
+    guideDot.layer.removeAllAnimations()
     guideDot.center = point
   }
 

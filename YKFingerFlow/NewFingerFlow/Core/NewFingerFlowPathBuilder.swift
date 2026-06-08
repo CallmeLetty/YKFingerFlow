@@ -1,4 +1,4 @@
-// Copyright (c) 2023, Bongmi — reuses legacy `UIBezierPath.subPaths` from FingerFlowExtension.swift.
+// Copyright (c) 2026, YKFingerFlow — path construction with seeded generator + precomputed arc-length table.
 
 import UIKit
 
@@ -6,6 +6,7 @@ struct NewFingerFlowPathLayout {
   let startPath: UIBezierPath
   let startPoint: CGPoint
   let startCenter: CGPoint
+  let startRadius: CGFloat
   let drawArea: CGRect
   let dotRadius: CGFloat = 50
   let speedPerSecond: Double = 15
@@ -34,12 +35,13 @@ struct NewFingerFlowPathLayout {
       startPath: startPath,
       startPoint: startPoint,
       startCenter: startCenter,
+      startRadius: startRadius,
       drawArea: drawArea
     )
   }
 
-  func buildProgressPath(duration: TimeInterval) -> (path: CGPath, strokeStartFraction: CGFloat) {
-    let lengthNeeded = duration * speedPerSecond
+  func buildProgressPath(duration: TimeInterval, seed: UInt64) -> NewFingerFlowBuiltPath {
+    let lengthNeeded = CGFloat(duration * speedPerSecond)
     let safe = CGRect(
       x: drawArea.minX + dotRadius,
       y: drawArea.minY + dotRadius,
@@ -47,23 +49,49 @@ struct NewFingerFlowPathLayout {
       height: drawArea.height - dotRadius * 2
     )
 
-    var segments = [startPath]
-    var leftPaths: [UIBezierPath]?
-    repeat {
-      leftPaths = startPath.subPaths(
+    let leftPaths: [UIBezierPath]
+    if let generated = NewFingerFlowSubPathGenerator.generate(
+      startPath: startPath,
+      startCenter: startCenter,
+      wholeLengthWithoutStart: lengthNeeded,
+      pointSafeArea: safe,
+      seed: seed
+    ) {
+      leftPaths = generated
+    } else if let fallback = legacySubPaths(lengthNeeded: lengthNeeded, safe: safe) {
+      leftPaths = fallback
+    } else {
+      return .empty(pathOrigin: startPoint)
+    }
+
+    let combined = UIBezierPath()
+    combined.append(startPath)
+    leftPaths.forEach { combined.append($0) }
+
+    let cgPath = combined.cgPath
+    let arcLengthPath = NewFingerFlowArcLengthPath.make(from: cgPath, pathOrigin: startPoint)
+    let startArcLength = startRadius * 120 / 180 * .pi
+    let total = arcLengthPath.totalLength
+    let strokeStart = total > 0 ? startArcLength / total : 0
+
+    return NewFingerFlowBuiltPath(
+      cgPath: cgPath,
+      strokeStartFraction: strokeStart,
+      arcLengthPath: arcLengthPath
+    )
+  }
+
+  private func legacySubPaths(lengthNeeded: CGFloat, safe: CGRect) -> [UIBezierPath]? {
+    for _ in 0..<32 {
+      if let paths = startPath.subPaths(
         startClockWise: true,
         startCenter: startCenter,
         wholeLengthWithoutStart: lengthNeeded,
         pointSafeArea: safe
-      )
-    } while leftPaths == nil
-
-    segments.append(contentsOf: leftPaths!)
-    let combined = UIBezierPath()
-    segments.forEach { combined.append($0) }
-
-    let total = combined.cgPath.length
-    let strokeStart = total > 0 ? startPath.cgPath.length / total : 0
-    return (combined.cgPath, strokeStart)
+      ) {
+        return paths
+      }
+    }
+    return nil
   }
 }
