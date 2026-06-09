@@ -4,7 +4,6 @@ import AVFAudio
 import AudioToolbox
 import RxCocoa
 import RxSwift
-import SDWebImage
 import SnapKit
 import UIKit
 
@@ -30,14 +29,17 @@ public final class NewFingerFlowViewController: UIViewController {
   /// 辅助倒计时：松手后暂停宽限 5s，tick 发 `pauseGraceSecondElapsed`，结束发 `pauseGraceFinished` 并进入真正暂停。
   private var pauseGraceClock: NewFingerFlowCountdownClock?
 
-  private var audioPlayer: AVAudioPlayer?
-  private var needToPlay = false
+  var audioPlayer: AVAudioPlayer?
+  var currentImage: FingerFlowBackgroundImage = .bg_pic1
+  var currentMusic: FingerFlowBackgroundMusic = .bg_music_dreamstate
+  var needToPlay = false
   private var duration: TimeInterval = 60
   private var pauseOverlay: NewFingerFlowPauseOverlay?
+  private var firstAppear = true
 
-  private lazy var bgImageView: UIImageView = {
+  lazy var bgImageView: UIImageView = {
     let imageView = UIImageView()
-    imageView.sd_setImage(with: URL(string: FingerFlowBackgroundImage.bg_pic1.imageUrlString))
+    imageView.image = currentImage.image
     return imageView
   }()
 
@@ -66,10 +68,17 @@ public final class NewFingerFlowViewController: UIViewController {
     return imageView
   }()
 
+  private lazy var resourcePicker: FingerFlowResourcePicker = {
+    let picker = FingerFlowResourcePicker(delegate: self)
+    picker.isHidden = true
+    return picker
+  }()
+
   private var gameView: NewFingerFlowGameView!
 
   public init() {
     super.init(nibName: nil, bundle: nil)
+    checkChosenResource()
   }
 
   required init?(coder: NSCoder) {
@@ -84,11 +93,20 @@ public final class NewFingerFlowViewController: UIViewController {
     gameView = NewFingerFlowGameView(duration: duration, delegate: self)
     view.insertSubview(gameView, aboveSubview: bgImageView)
     gameView.snp.makeConstraints { $0.edges.equalToSuperview() }
+    bringSetupChromeToFront()
     bindLifecycle()
+    bindIconTaps()
     send(.resetRequested)
   }
 
   public override var preferredStatusBarStyle: UIStatusBarStyle { .lightContent }
+
+  public override func viewDidAppear(_ animated: Bool) {
+    super.viewDidAppear(animated)
+    guard firstAppear else { return }
+    firstAppear = false
+    prepareAudioDataGroup()
+  }
 
   public override func viewWillDisappear(_ animated: Bool) {
     super.viewWillDisappear(animated)
@@ -316,6 +334,32 @@ private extension NewFingerFlowViewController {
     pauseOverlay = overlay
   }
 
+  func bringSetupChromeToFront() {
+    [titleLabel, timePicker, musicIcon, imageIcon, resourcePicker].forEach {
+      view.bringSubviewToFront($0)
+    }
+  }
+
+  func bindIconTaps() {
+    musicIcon.rx.tapGesture().when(.recognized).subscribe(onNext: { [weak self] _ in
+      guard let self else { return }
+      var musicValue = AppManager.shared.userDiskCache?.getInt(for: KVCacheKey.fingerFlowBgMusic) ?? 2
+      if musicValue == 0 { musicValue = 2 }
+      let music = FingerFlowBackgroundMusic(rawValue: musicValue) ?? .bg_music_dreamstate
+      resourcePicker.openWithType(.music(selected: music))
+      prepareAudio(music)
+      audioPlayer?.play()
+    }).disposed(by: rxDisposeBag)
+
+    imageIcon.rx.tapGesture().when(.recognized).subscribe(onNext: { [weak self] _ in
+      guard let self else { return }
+      var imageValue = AppManager.shared.userDiskCache?.getInt(for: KVCacheKey.fingerFlowBgImage) ?? 1
+      if imageValue == 0 { imageValue = 1 }
+      let image = FingerFlowBackgroundImage(rawValue: imageValue) ?? .bg_pic1
+      resourcePicker.openWithType(.image(selected: image))
+    }).disposed(by: rxDisposeBag)
+  }
+
   func bindLifecycle() {
     NotificationCenter.default.rx
       .notification(UIApplication.didEnterBackgroundNotification)
@@ -394,6 +438,9 @@ private extension NewFingerFlowViewController {
       make.bottom.width.height.equalTo(musicIcon)
       make.right.equalTo(-65)
     }
+
+    view.addSubview(resourcePicker)
+    resourcePicker.snp.makeConstraints { $0.edges.equalToSuperview() }
   }
 }
 

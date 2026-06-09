@@ -5,7 +5,6 @@
 import RxSwift
 import RxCocoa
 import SnapKit
-import SDWebImage
 import UIKit
 import AVFoundation
 
@@ -79,7 +78,7 @@ public class FingerFlowVC: UIViewController {
     private(set) lazy var bgImageView = {
         let imageView = UIImageView()
         
-        imageView.sd_setImage(with: URL(string: self.currentImage.imageUrlString))
+        imageView.image = self.currentImage.image
         return imageView
     }()
     

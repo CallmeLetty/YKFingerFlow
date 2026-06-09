@@ -38,19 +38,23 @@ enum FingerFlowBackgroundImage: Int, CaseIterable {
     return FingerFlowBackgroundImage.allCases.firstIndex(of: self) ?? 0
   }
     
-  var imageUrlString: String {
+  var imageName: String {
     switch self {
-      case .bg_pic1: return "https://s.bongmi.cn/push/imgs/8e0c19d6915b2d26def7de815b7cf725.png"
-      case .bg_pic2: return "https://s.bongmi.cn/push/imgs/355845c2700b2ad415beb2f7d3babe71.png"
-      case .bg_pic3: return "https://s.bongmi.cn/push/imgs/0cad48f6903442e6cc13f4001e1128cc.png"
-      case .bg_pic4: return "https://s.bongmi.cn/push/imgs/5055cc800cc513f82b1a69f300e1343d.png"
-      case .bg_pic5: return "https://s.bongmi.cn/push/imgs/a5142ef2b03abdf572d59d08ce18242d.png"
-      case .bg_pic6: return "https://s.bongmi.cn/push/imgs/c693786f19aba73551292e6d96021d4a.png"
-      case .bg_pic7: return "https://s.bongmi.cn/push/imgs/d106e856f435e4b90db4444bcefb3af1.png"
-      case .bg_pic8: return "https://s.bongmi.cn/push/imgs/c374c73f0ec949695e85dc721501a8d6.png"
-      case .bg_pic9: return "https://s.bongmi.cn/push/imgs/34950a354427ff830d0f2a205b91eb55.png"
-      case .bg_pic10: return "https://s.bongmi.cn/push/imgs/a12068f599528cdb4721736509732540.png"
+      case .bg_pic1:  return "bg_pic1"
+      case .bg_pic2:  return "bg_pic2"
+      case .bg_pic3:  return "bg_pic3"
+      case .bg_pic4:  return "bg_pic4"
+      case .bg_pic5:  return "bg_pic5"
+      case .bg_pic6:  return "bg_pic6"
+      case .bg_pic7:  return "bg_pic7"
+      case .bg_pic8:  return "bg_pic8"
+      case .bg_pic9:  return "bg_pic9"
+      case .bg_pic10: return "bg_pic10"
     }
+  }
+
+  var image: UIImage? {
+    UIImage(named: imageName)
   }
 }
 

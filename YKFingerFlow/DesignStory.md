@@ -2,14 +2,15 @@
 
 ## 这游戏在玩什么？
 
-想象用手指按住屏幕中央一颗发光的小圆点。  
-三秒倒计时过后，它会带着你，沿着一条**随机弯弯曲曲的轨迹**在屏幕上爬行——像一条被猫拨乱的毛线，又像你在黑暗中摸墙找开关。
+用手指按住屏幕中央一颗发光的小圆点。三秒倒计时过后，跟随圆点沿着一条“**随机”弯曲轨迹**在屏幕上前行。
+
+练习**专注力 + 耐心 + 微操稳定性。**
 
 规则极简：
 
-- **跟住它**。圆点动，你的手指也得动。
+- **跟住它**。圆点动，手指也得动。
 - **别松手，也别跑偏**。手指离圆心超过大约 **55pt**，游戏立刻暂停【New · `NewFingerFlowGameView.containsTouchNearGuide(_:threshold:)`，默认 55】
-- **撑满选择的时长**。路径总长约 `时长 × 15` 像素/秒；跟完全程，进结果页，看你能坚持多久。【`speedPerSecond = 15` · Legacy `FingerFlowGameView` / New `NewFingerFlowPathLayout`】
+- **撑满选择的时长**。路径总长约 `时长 × 15` pt/s；跟完全程，看能坚持多久。【`speedPerSecond = 15` · Legacy `FingerFlowGameView` / New `NewFingerFlowPathLayout`】
 
 ```swift
 // Legacy  FingerFlowGameView.swift
@@ -22,11 +23,9 @@ let lengthNeeded = CGFloat(duration * speedPerSecond)
 开局前会选挑战时长、背景图、BGM。  
 长按圆心 **3 秒**启动【Legacy `startPreparation` · New `beginPreparationUI` → `startPreparationCountdown()`】；
 
-中途暂停后，文案会变成「手指长按发光圆心**继续**」【`FingerFlowPropmptType.pausePlace`】——细节虽小，体验很要紧。
+中途暂停后，文案会变成「手指长按发光圆心**继续**」【`FingerFlowPropmptType.pausePlace`】。
 
 中间偶尔蹦出「做得好！继续加油！」等鼓励。【Legacy `FingerFlowVC+Game.gameTimerAction` 每 15s · New `NewFingerFlowReducer.handleClockTick`，`welldoneInterval = 15`】
-
-练习**专注力 + 耐心 + 微操稳定性。**
 
 ---
 

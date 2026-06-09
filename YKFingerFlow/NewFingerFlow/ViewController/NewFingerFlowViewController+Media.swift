@@ -1,22 +1,18 @@
-// Copyright (c) 2023, Bongmi
-// All rights reserved
-// Author: liuyuanyuan@bongmi.com
+// Copyright (c) 2026, YKFingerFlow — 背景图与背景音乐选择。
 
-import AVKit
-extension FingerFlowVC {
+import AVFAudio
+import UIKit
+
+extension NewFingerFlowViewController {
   func checkChosenResource() {
-      // bg image
     let imageValue = AppManager.shared.userDiskCache?.getInt(for: KVCacheKey.fingerFlowBgImage) ?? 1
-    let image = FingerFlowBackgroundImage(rawValue: imageValue) ?? .bg_pic1
-    currentImage = image
+    currentImage = FingerFlowBackgroundImage(rawValue: imageValue) ?? .bg_pic1
 
-      // music
     var musicValue = AppManager.shared.userDiskCache?.getInt(for: KVCacheKey.fingerFlowBgMusic) ?? 2
     if musicValue == 0 {
       musicValue = 2
     }
-    let music = FingerFlowBackgroundMusic(rawValue: musicValue) ?? .bg_music_dreamstate
-    currentMusic = music
+    currentMusic = FingerFlowBackgroundMusic(rawValue: musicValue) ?? .bg_music_dreamstate
   }
 
   func prepareAudioDataGroup() {
@@ -33,19 +29,16 @@ extension FingerFlowVC {
       workingQueue.async {
         do {
           let newData = try Data(contentsOf: audioURL)
-          AppManager.shared.globalDiskCache.setData(newData,
-                                                    for: urlString)
-        } catch (let error) {
+          AppManager.shared.globalDiskCache.setData(newData, for: urlString)
+        } catch {
           OnlineLogger().error(error.localizedDescription)
         }
+        workingGroup.leave()
       }
     }
 
-    workingGroup.notify(queue: workingQueue) { [weak self] in
-      guard let self = self,
-            self.needToPlay else {
-        return
-      }
+    workingGroup.notify(queue: .main) { [weak self] in
+      guard let self, self.needToPlay else { return }
       self.prepareAudio(self.currentMusic)
       self.audioPlayer?.play()
     }
@@ -53,14 +46,12 @@ extension FingerFlowVC {
 
   func prepareAudio(_ selected: FingerFlowBackgroundMusic) {
     guard let urlString = selected.urlString else {
-      // 选中none
       audioPlayer?.stop()
       audioPlayer = nil
       return
     }
 
     guard let data = AppManager.shared.globalDiskCache.getData(for: urlString) else {
-        // 未解析完成
       needToPlay = true
       audioPlayer?.stop()
       audioPlayer = nil
@@ -76,55 +67,50 @@ extension FingerFlowVC {
       let session = AVAudioSession.sharedInstance()
       try session.setCategory(.playback)
       try session.setActive(true)
-      self.audioPlayer = newPlayer
+      audioPlayer = newPlayer
     } catch {
       audioPlayer = nil
     }
   }
 }
 
-  // MARK: - subviews delegate
-extension FingerFlowVC: FingerFlowResourcePickerDelegate {
-    // FingerFlowResourcePicker
+extension NewFingerFlowViewController: FingerFlowResourcePickerDelegate {
   func onCancelingSelection(_ resourceType: FingerFlowResourcePicker.ResourceType) {
     switch resourceType {
-      case .music(_):
-        audioPlayer?.stop()
-        needToPlay = false
-      case .image(_):
-        bgImageView.image = currentImage.image
+    case .music(_):
+      audioPlayer?.stop()
+      needToPlay = false
+    case .image(_):
+      bgImageView.image = currentImage.image
     }
   }
 
   func onSelecting(_ resourceType: FingerFlowResourcePicker.ResourceType) {
     switch resourceType {
-      case .music(let selected):
-        prepareAudio(selected)
-        audioPlayer?.play()
-      case .image(let selected):
-        bgImageView.image = selected.image
+    case .music(let selected):
+      prepareAudio(selected)
+      audioPlayer?.play()
+    case .image(let selected):
+      bgImageView.image = selected.image
     }
   }
 
   func onConfirm(_ resourceType: FingerFlowResourcePicker.ResourceType) {
     switch resourceType {
-      case .music(let selected):
-        currentMusic = selected
-        AppManager.shared.userDiskCache?.setInt(selected.rawValue,
-                                                for: KVCacheKey.fingerFlowBgMusic)
-        prepareAudio(selected)
-        audioPlayer?.stop()
-        needToPlay = false
-      case .image(let selected):
-        AppManager.shared.userDiskCache?.setInt(selected.rawValue,
-                                                for: KVCacheKey.fingerFlowBgImage)
-        currentImage = selected
+    case .music(let selected):
+      currentMusic = selected
+      AppManager.shared.userDiskCache?.setInt(selected.rawValue, for: KVCacheKey.fingerFlowBgMusic)
+      prepareAudio(selected)
+      audioPlayer?.stop()
+      needToPlay = false
+    case .image(let selected):
+      AppManager.shared.userDiskCache?.setInt(selected.rawValue, for: KVCacheKey.fingerFlowBgImage)
+      currentImage = selected
     }
   }
 }
 
-// MARK: - AVAudioPlayerDelegate
-extension FingerFlowVC: AVAudioPlayerDelegate {
+extension NewFingerFlowViewController: AVAudioPlayerDelegate {
   public func audioPlayerDecodeErrorDidOccur(_ player: AVAudioPlayer, error: Error?) {
     assert(error != nil)
   }

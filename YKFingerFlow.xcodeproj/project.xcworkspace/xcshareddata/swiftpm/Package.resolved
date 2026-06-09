@@ -2,15 +2,6 @@
   "originHash" : "9c849edd0e1b51a9af4b15debaba089c03d3ce20dcebb8ef88e20b007dc392ae",
   "pins" : [
     {
-      "identity" : "lottie-ios",
-      "kind" : "remoteSourceControl",
-      "location" : "https://github.com/airbnb/lottie-ios.git",
-      "state" : {
-        "revision" : "0cb03fd7564d27345bcd96144b811e56212949c6",
-        "version" : "4.6.0"
-      }
-    },
-    {
       "identity" : "reusable",
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/AliSoftware/Reusable.git",
@@ -26,15 +17,6 @@
       "state" : {
         "revision" : "132aea4f236ccadc51590b38af0357a331d51fa2",
         "version" : "6.10.2"
-      }
-    },
-    {
-      "identity" : "sdwebimage",
-      "kind" : "remoteSourceControl",
-      "location" : "https://github.com/SDWebImage/SDWebImage.git",
-      "state" : {
-        "revision" : "2de3a496eaf6df9a1312862adcfd54acd73c39c0",
-        "version" : "5.21.7"
       }
     },
     {

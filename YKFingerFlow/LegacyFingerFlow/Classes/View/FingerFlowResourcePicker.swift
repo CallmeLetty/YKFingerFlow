@@ -8,8 +8,6 @@ import Reusable
 import SnapKit
 import RxSwift
 import RxCocoa
-import SDWebImage
-
 protocol FingerFlowResourcePickerDelegate: NSObjectProtocol {
   func onCancelingSelection(_ resourceType: FingerFlowResourcePicker.ResourceType)
   func onSelecting(_ resourceType: FingerFlowResourcePicker.ResourceType)
@@ -293,7 +291,7 @@ class FingerFlowMusicPickerCell: UIView, Reusable {
 
   var highlighted: Bool = false {
     didSet {
-      title.textColor = self.highlighted ? UIColor.blue : UIColor.black.withAlphaComponent(0.8)
+      title.textColor = self.highlighted ? UIColor.systemTeal : UIColor.lightGray.withAlphaComponent(0.8)
       icon.image = self.highlighted ? type.highlightImage : type.normalImage
     }
   }
@@ -315,7 +313,7 @@ class FingerFlowMusicPickerCell: UIView, Reusable {
   private lazy var title = {
     let label = UILabel()
 
-    label.font = UIFont.systemFont(ofSize: 12, weight: .medium)
+    label.font = UIFont.systemFont(ofSize: 12, weight: .bold)
     label.textColor = UIColor.white.withAlphaComponent(0.8)
     label.textAlignment = .center
     label.text = self.type.title
@@ -376,7 +374,7 @@ class FingerFlowImagePickerCell: UIView {
       imageView.layer.borderWidth = 1.5
       imageView.layer.borderColor = UIColor.clear.cgColor
     imageView.layer.cornerRadius = 8
-    imageView.sd_setImage(with: URL(string: self.type.imageUrlString))
+    imageView.image = self.type.image
     return imageView
   }()
 

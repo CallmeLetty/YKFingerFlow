@@ -5,7 +5,6 @@
 import SnapKit
 import RxSwift
 import RxCocoa
-import Lottie
 import UIKit
 
 class FingerFlowResultVC: UIViewController {
@@ -24,11 +23,6 @@ class FingerFlowResultVC: UIViewController {
 
     bindEvents()
     setupViews()
-  }
-
-  override func viewDidAppear(_ animated: Bool) {
-    super.viewDidAppear(animated)
-    buttonAnimationView.play()
   }
 
   public override var preferredStatusBarStyle: UIStatusBarStyle {
@@ -94,7 +88,7 @@ class FingerFlowResultVC: UIViewController {
     private lazy var shareButton = {
         let button = UIButton()
         
-        button.backgroundColor = .blue
+        button.backgroundColor = .systemTeal
         button.setTitle("分享",for: .normal)
         button.setTitleColor(.white,
                              for: .normal)
@@ -109,14 +103,6 @@ class FingerFlowResultVC: UIViewController {
       button.setImage(.init(systemName: "close"), for: .normal)
     button.layer.cornerRadius = 17.0
     return button
-  }()
-
-  private lazy var buttonAnimationView: LottieAnimationView = {
-    let animationView = LottieAnimationView(name: "share_button_js",
-                                         bundle: FingerFloweBundleUtil.bundle()!)
-      animationView.loopMode = .loop
-    animationView.isUserInteractionEnabled = false
-    return animationView
   }()
 }
 
@@ -220,44 +206,6 @@ private extension FingerFlowResultVC {
       make.height.equalTo(58)
       make.bottom.equalToSuperview().offset(-25.5-FrameGuide.safeAreaBottomHeight)
     
-    }
-
-    shareButton.addSubview(buttonAnimationView)
-
-    buttonAnimationView.snp.makeConstraints { make in
-      make.center.equalToSuperview()
-      make.width.height.equalToSuperview()
-    
-    }
-
-    buttonAnimationToScale()
-  }
-
-  func buttonAnimationToScale() {
-    UIView.animate(withDuration: 1,
-                   delay: 0,
-                   options: [.layoutSubviews, .allowUserInteraction]) { [weak self] in
-      guard let self = self else {
-        return
-      }
-      self.shareButton.transform = CGAffineTransform(scaleX: 0.9,
-                                                     y: 0.9)
-    } completion: { [weak self] complete in
-      self?.buttonAnimationToNormal()
-    }
-  }
-
-  func buttonAnimationToNormal() {
-    UIView.animate(withDuration: 1,
-                   delay: 0,
-                   options: [.layoutSubviews, .allowUserInteraction]) { [weak self] in
-      guard let self = self else {
-        return
-      }
-      self.shareButton.transform = CGAffineTransform(scaleX: 1.0,
-                                                     y: 1.0)
-    } completion: { [weak self] complete in
-      self?.buttonAnimationToScale()
     }
   }
 }

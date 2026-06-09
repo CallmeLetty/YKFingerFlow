@@ -312,12 +312,6 @@ final class NewFingerFlowGameView: UIView {
     hideGameplayTextImmediately()
     [guideDot, putDot].forEach { $0.alpha = 0 }
   }
-
-  /// P1：用时钟采样的圆心做命中检测，而非 `presentation()` 的 frame。
-  func containsTouchNearGuide(_ point: CGPoint, threshold: CGFloat = 55) -> Bool {
-    let center = dotFrozen ? lastDotCenter : guideDot.center
-    return hypot(point.x - center.x, point.y - center.y) <= threshold
-  }
 }
 
 // MARK: - 私有
@@ -424,8 +418,11 @@ private extension NewFingerFlowGameView {
       pressState = .none
       return
     }
-    let point = recognizer.location(in: self)
-    pressState = containsTouchNearGuide(point) ? .inside : .outside
+      let point = recognizer.location(in: self)
+      let center = dotFrozen ? lastDotCenter : guideDot.center
+      /// 用时钟采样的圆心做命中检测，而非 `presentation()` 的 frame。
+      let containsTouchNearGuide = (hypot(point.x - center.x, point.y - center.y) <= 55)
+      pressState = containsTouchNearGuide ? .inside : .outside
   }
 }
 
