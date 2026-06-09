@@ -17,14 +17,28 @@ final class NewFingerFlowGameView: UIView {
   private let promptAnimator = NewFingerFlowPromptAnimator()
   private let putDotScaler = NewFingerFlowPutDotScaler()
 
+  // MARK: - 路径与播放状态
+
+  /// 本局已构建的路径：`cgPath`、弧长查表、`strokeStartFraction`；`nil` 表示尚未开局或已 reset。
   private var builtPath: NewFingerFlowBuiltPath?
+  /// 线 `strokeEnd` 的起始值（起始 120° 弧占全路径的弧长比例），来自 `builtPath.strokeStartFraction`。
   private var strokeStartFraction: CGFloat = 0
+  /// 弧长查表顺序 hint；`dotT` 单调递增时沿 knot 表向前扫，避免每帧从头查找。
   private var arcLengthHintIndex = 0
+  /// 最近一次 `rebuildPath` 使用的随机种子（与 Reducer `pathGeneration` 同步传入 SubPathGenerator）。
   private var pathGeneration: UInt64 = 0
+  /// 异步建路径任务句柄（历史预留）。当前 `rebuildPath` 为同步构建，仅 reset/deinit 时 cancel 以防旧 Task 残留。
   private var pathBuildTask: Task<Void, Never>?
+  /// 本局挑战时长（秒），与 VC / 主时钟一致；用于 `applyPlayback` 计算 `timeProgress` 与 `dotDuration`。
   private var duration: TimeInterval = 60
+
+  // MARK: - 圆点摆位与命中
+
+  /// 局末前 2s 为 true：`applyPlayback` 不再更新圆点位置（对齐 Legacy `stopDot`），线仍可继续画。
   private var dotFrozen = false
+  /// 上一帧查表得到的圆心；命中检测与 `dotFrozen` 时显示均用此坐标，避免读 `presentation()`。
   private var lastDotCenter: CGPoint = .zero
+  /// true = 圆点改用手动 `center` 摆位（已移除 SnapKit 约束）；游戏中/暂停恢复后必须为 true，否则约束与 center 打架导致圆点消失。
   private var usesManualGuidePositioning = false
 
   private var pressState = NewFingerFlowPress.none {
@@ -231,21 +245,32 @@ final class NewFingerFlowGameView: UIView {
     runGuideLoop(idlePrompt: FingerFlowPropmptType.pausePlace.localizedText)
   }
 
+  /// 每帧把主时钟 **时间** `elapsed` 映射到路径 **几何**（线 stroke / 圆点坐标）。
+  ///
+  /// 时间 → 几何须分两步，不能直接把 `elapsed/duration` 当路径 t：
+  /// 1. `elapsed / duration`（或 `dotDuration`）→ 得到 0…1 的 **播放进度**（时间维）；
+  /// 2. 将进度作为 **弧长比例** 传给 `ArcLengthPath.point(atFraction:)`（距离维），才得到圆点坐标。
+  ///
+  /// 线与圆点使用不同时间分母（对齐 Legacy 双 CA），故 `strokeFraction` 与 `dotT` 不同。
   func applyPlayback(elapsed: TimeInterval, duration: TimeInterval) {
     guard let built = builtPath, duration > 0 else { return }
-    let t = min(max(elapsed / duration, 0), 1)
-    // strokeEnd 从待机起始弧起增长；圆点沿全路径使用 Legacy 的 paced 时长。
-    let strokeFraction = strokeStartFraction + (1 - strokeStartFraction) * CGFloat(t)
+
+    // 时间维：用户设定的游戏时长内走了多少比例（≠ 路径方程参数 t）
+    let timeProgress = min(max(elapsed / duration, 0), 1)
+    // 几何维：strokeEnd 按弧长比例，从起始 120° 弧终点（strokeStartFraction）画到路径末端
+    let strokeFraction = strokeStartFraction + (1 - strokeStartFraction) * CGFloat(timeProgress)
     gameLayer?.strokeEnd = strokeFraction
 
     if !dotFrozen {
       let startArcLength = layout.startRadius * 120 / 180 * .pi
+      // 圆点沿全路径的「时间轴」比线多 startArc/15 秒（Legacy position CA 的 duration）
       let dotDuration = duration + startArcLength / 15
       let dotT = min(max(elapsed / dotDuration, 0), 1)
       let point: CGPoint
       if dotT <= 0 {
         point = layout.startPoint
       } else {
+        // dotT 此处作为弧长比例 fraction 查表，实现匀速沿路径移动（弧长参数化）
         point = built.arcLengthPath.point(atFraction: CGFloat(dotT), hintIndex: &arcLengthHintIndex)
       }
       lastDotCenter = point

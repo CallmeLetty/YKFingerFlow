@@ -31,7 +31,7 @@ let lengthNeeded = CGFloat(duration * speedPerSecond)
 
 ## 路径计算
 
-路径不是设计师手绘的，是算法「掷骰子」掷出来的：
+路径不是既定or手绘，而是算法「掷骰子」掷出来的：
 
 1. **起手式**：圆心先画一段约 **120°** 的起始弧，把手指从静止「拽」进轨道。【`NewFingerFlowPathLayout.make()`，`angle: 120`】
 2. **随机链**：后面接一串随机半径、随机角度的圆弧，左拐右拐，直到总长度够格。【Legacy `FingerFlowExtension.subPaths()` · New `NewFingerFlowSubPathGenerator.generate()`】
@@ -43,7 +43,7 @@ let lengthNeeded = CGFloat(duration * speedPerSecond)
 
 > **人看到的是一条连续的线；代码必须知道线上每一个时刻的坐标。**
 
-Legacy 和 New 解决这个矛盾的方式，气质完全不同。
+Legacy 和 New 解决这个矛盾的方式完全不同。
 
 ---
 
@@ -77,9 +77,9 @@ guideDot.layer.add(circleAnimation, forKey: "Move")
 开跑后 `drawCircleList()` 挂上 Layer，启动双动画：
 
 - **线**：`strokeEnd` 从某个起点拉到 1，画出已走过的轨迹。【`fromValue = startPath.cgPath.length / lengthNeededToRun`】
-- **点**：`position` 沿路径爬，时长还和线不一样——这是**刻意保留的手感**（线先「画出来」，点有自己的节奏）。【`dotDuration = duration + startPath.cgPath.length / 15`】
+- **点**：`position` 沿路径爬。【`dotDuration = duration + startPath.cgPath.length / 15`】
 
-圆点具体在哪？问 `presentationLayer`。【见 `FingerFlowGameView.longPressGuideDot(recognizer:)`】
+圆点具体在哪？通过 `presentationLayer`获取。【见 `FingerFlowGameView.longPressGuideDot(recognizer:)`】
 
 ```swift
 guard let guideFrame = guideDot.layer.presentation()?.frame else { ... }
@@ -99,7 +99,7 @@ pressState = guideFrame.contains(point) ? .inside : .outside
 
 ### 状态：Reducer 管理
 
-所有变化走 `send(Event) → Reducer → [Effect]`。【`NewFingerFlowViewController.send(_:)` → `NewFingerFlowReducer.send(_:snapshot:)`】  
+所有变化走 `send(Event)` → `Reducer` → `[Effect]`。【`NewFingerFlowViewController.send(_:)` → `NewFingerFlowReducer.send(_:snapshot:)`】  
 ViewController 只负责「照单执行」`apply(effects)`——不再到处 `switch gameState`。  
 状态图能画、单测能写、QA 能对着表点：从 `preparation` 到 `running` 到 `paused`，每条路有编号。【`NewFingerFlowPhase` · `NewFingerFlowReducer.handlePress`】
 
@@ -181,4 +181,4 @@ let point = built.arcLengthPath.point(atFraction: CGFloat(dotT), hintIndex: &arc
 
 ---
 
-*文档路径：`YKFingerFlow/DesignStory.md`。技术对照见 `[Optimization.md](Optimization.md)`。*
+*文档路径：`YKFingerFlow/DesignStory.md`。公式与几何见 [`TechTalk.md`](TechTalk.md)；技术对照见 [`Optimization.md`](Optimization.md)。*

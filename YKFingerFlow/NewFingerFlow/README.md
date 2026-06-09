@@ -27,3 +27,7 @@ See [Optimization.md](../Optimization.md) for Legacy vs New algorithm and usage 
 ## Design story
 
 See [DesignStory.md](../DesignStory.md) for a narrative overview of the game design and refactor (Chinese).
+
+## Tech talk
+
+See [TechTalk.md](../TechTalk.md) for geometry, formulas, and arc-length parameterization (Chinese).

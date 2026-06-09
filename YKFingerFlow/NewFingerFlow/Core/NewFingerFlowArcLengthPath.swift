@@ -3,7 +3,15 @@
 import CoreGraphics
 import UIKit
 
-/// 每局路径构建一次；`applyPlayback` 查表而非每帧重走 `CGPath`。
+/// 弧长参数化查表（每局构建一次）。
+///
+/// **路径参数 ≠ 时间参数**：
+/// - `CGPath` / 贝塞尔公式里的 `t`（0→1）按曲线方程均匀变化，**不等于**沿路径走了多少距离；
+///   同样 Δt 在弯急处走过的弧长短、弯缓处长，圆点会忽快忽慢。
+/// - 本结构的 `fraction`（0→1）表示 **已走弧长 / 总弧长**，是距离比例，与时间无关。
+/// - 播放时须先把主时钟的 `elapsed` 换成 `dotT`（见 `applyPlayback`），再传入 `point(atFraction:)` 查坐标。
+///
+/// Legacy 用 `CAKeyframeAnimation.calculationMode = .paced` 在合成器内做上述换算；New 在构建期建 knot 表显式查表。
 struct NewFingerFlowArcLengthPath {
   let pathOrigin: CGPoint
   let totalLength: CGFloat
@@ -36,13 +44,17 @@ struct NewFingerFlowArcLengthPath {
     return point(atFraction: fraction, hintIndex: &hint)
   }
 
-  /// 单调播放时传入持久 `hintIndex`，近似 O(1) 查找。
+  /// 按 **弧长比例** `fraction`（非贝塞尔 t、非秒数）返回路径上的点。
+  ///
+  /// - Parameter fraction: 0 = 起点，`1` = 终点，0.5 ≈ 走了一半路程（按弧长而非按方程参数）。
+  /// - Parameter hintIndex: 单调播放时持久化，沿 knot 顺序前进，查找近似 O(1)。
   func point(atFraction fraction: CGFloat, hintIndex: inout Int) -> CGPoint {
     let clamped = min(max(fraction, 0), 1)
     guard totalLength > 0, let first = knots.first else { return pathOrigin }
     if clamped <= 0 { return pathOrigin }
     if clamped >= 1 { return knots.last?.point ?? pathOrigin }
 
+    // 弧长目标 = 总弧长 × 距离比例（此处才把时间维度的 fraction 落到几何距离）
     let target = totalLength * clamped
     if target <= first.arcLength { return pathOrigin }
 
@@ -122,6 +134,7 @@ private struct KnotBuilder {
   private mutating func appendQuadCurve(control: CGPoint, end: CGPoint) {
     var previous = current
     for index in 1...curveSamples {
+      // 建表阶段的 t：贝塞尔方程参数，仅用于采样折线逼近弧长，与运行时 `point(atFraction:)` 的 fraction 不是同一套变量。
       let t = CGFloat(index) / CGFloat(curveSamples)
       let oneMinusT = 1 - t
       let point = CGPoint(

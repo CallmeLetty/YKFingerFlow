@@ -69,9 +69,11 @@ struct NewFingerFlowPathLayout {
     leftPaths.forEach { combined.append($0) }
 
     let cgPath = combined.cgPath
+    // 构建期一次性建立「弧长 → 坐标」映射，运行时只用 fraction 查表，避免每帧按贝塞尔 t 采样导致速度不均
     let arcLengthPath = NewFingerFlowArcLengthPath.make(from: cgPath, pathOrigin: startPoint)
     let startArcLength = startRadius * 120 / 180 * .pi
     let total = arcLengthPath.totalLength
+    // strokeStart 也是弧长比例：起始弧占整条路径的实际长度比（非时间、非贝塞尔 t）
     let strokeStart = total > 0 ? startArcLength / total : 0
 
     return NewFingerFlowBuiltPath(
