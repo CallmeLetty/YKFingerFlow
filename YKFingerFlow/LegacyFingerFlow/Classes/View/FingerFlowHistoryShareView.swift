@@ -48,7 +48,7 @@ class FingerFlowHistoryShareView: UIView {
   private lazy var shareBtn = {
     let button = UIButton()
 
-    button.backgroundColor = UIColor.blue
+    button.backgroundColor = UIColor.systemTeal
     button.setTitle("分享给好友",
                          for: .normal)
     button.setTitleColor(UIColor(hexString: "#131C41"),

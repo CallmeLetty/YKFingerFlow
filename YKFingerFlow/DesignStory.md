@@ -1,6 +1,6 @@
 # FingerFlow
 
-## 这游戏在玩什么？
+## 游戏玩法
 
 用手指按住屏幕中央一颗发光的小圆点。三秒倒计时过后，跟随圆点沿着一条“**随机”弯曲轨迹**在屏幕上前行。
 
@@ -8,24 +8,16 @@
 
 规则极简：
 
-- **跟住它**。圆点动，手指也得动。
-- **别松手，也别跑偏**。手指离圆心超过大约 **55pt**，游戏立刻暂停【New · `NewFingerFlowGameView.containsTouchNearGuide(_:threshold:)`，默认 55】
+- 手指**跟住**圆点移动。
+- **别松手，也别跑偏**。手指离圆心超过大约 **55pt（离开光圈）**，游戏立刻暂停【New · `NewFingerFlowGameView.containsTouchNearGuide(_:threshold:)`，默认 55】
 - **撑满选择的时长**。路径总长约 `时长 × 15` pt/s；跟完全程，看能坚持多久。【`speedPerSecond = 15` · Legacy `FingerFlowGameView` / New `NewFingerFlowPathLayout`】
-
-```swift
-// Legacy  FingerFlowGameView.swift
-var lengthNeededToRun: Double { Double(duration) * speedPerSecond }  // speedPerSecond = 15
-
-// New  NewFingerFlowPathBuilder.swift
-let lengthNeeded = CGFloat(duration * speedPerSecond)
-```
 
 开局前会选挑战时长、背景图、BGM。  
 长按圆心 **3 秒**启动【Legacy `startPreparation` · New `beginPreparationUI` → `startPreparationCountdown()`】；
 
-中途暂停后，文案会变成「手指长按发光圆心**继续**」【`FingerFlowPropmptType.pausePlace`】。
+中途暂停后，根据暂停类型不同出现提示文案「手指长按发光圆心**继续/**请将手指靠近圆环」。
 
-中间偶尔蹦出「做得好！继续加油！」等鼓励。【Legacy `FingerFlowVC+Game.gameTimerAction` 每 15s · New `NewFingerFlowReducer.handleClockTick`，`welldoneInterval = 15`】
+中间每15s出现「做得好！继续加油！」等鼓励。【Legacy `FingerFlowVC+Game.gameTimerAction` 每 15s；New `NewFingerFlowReducer.handleClockTick`，`welldoneInterval = 15`】
 
 ---
 
@@ -53,8 +45,94 @@ Legacy 和 New 解决这个矛盾的方式完全不同。
 
 ### 状态：到处都在改
 
-`gameState` 散落在 ViewController、Timer 回调、通知里。【`FingerFlowVC.gameState` · `FingerFlowVC+Game.swift`】  
-谁都能推一把状态机——像多人同时扶一个醉汉过马路，能走，但没人说得清下一步踩哪块砖。
+`gameState` 有一个 `didSet`，一改就进 `_onStateUpdate()` 刷 UI——但**赋值本身**来自很多入口：
+
+**① 属性 + didSet（改完才统一反应）**
+
+```swift
+// FingerFlowVC.swift
+var gameState = FingerFlowState.before {
+    didSet {
+        guard gameState != oldValue else { return }
+        _onStateUpdate()   // 根据新状态启 Timer、弹暂停页、startGame…
+    }
+}
+```
+
+**② 手势回调：长按圆点 inside/outside**
+
+```swift
+// FingerFlowVC+Game.swift · FingerFlowGameViewDelegate
+func onPressStateUpdate(_ state: FingerFlowPressState) {
+    var newState = gameState
+    switch gameState {
+    case .before:
+        if state == .inside { newState = .preparation }
+    case .start, .resumeFromPauseCountdown, .resumeFromPauseRunning:
+        newState = .pauseCountdown          // 松手或滑出 → 暂停倒计时
+    case .resumeFromPauseWaiting:
+        if state == .inside { newState = .resumeFromPauseRunning }
+    // …
+    }
+    gameState = newState
+}
+```
+
+**③ 准备结束、Timer 到点**
+
+```swift
+func onPreparationCountdownEnd() { gameState = .start }
+
+@objc private func gameTimerAction() {
+    guard pastDuration < duration else {
+        gameState = .end                  // 玩满时长
+        return
+    }
+    pastDuration += 1
+    // welldone、completing、stopDot…
+}
+
+@objc func pauseTimerAction() {
+    guard pauseCountdownNumber > 1 else {
+        gameState = .pause                // 宽限 5s 用完 → 真暂停
+        return
+    }
+}
+```
+
+**④ 暂停浮层按钮（Rx 闭包里直接改）**
+
+```swift
+pauseView.exitButton.rx.tap.subscribe(onNext: { [weak self] _ in
+    self?.gameState = .end
+})
+pauseView.continueButton.rx.tap.subscribe(onNext: { [weak self] _ in
+    self?.gameState = .resumeFromPauseWaiting
+})
+```
+
+**⑤ 进后台通知**
+
+```swift
+// FingerFlowVC.swift
+NotificationCenter.default.rx.notification(UIApplication.didEnterBackgroundNotification)
+    .subscribe(onNext: { [weak self] _ in
+        if self?.gameState.isRunning {
+            self?.gameState = .pauseCountdown
+        } else if self?.gameState == .preparation {
+            self?.gameState = .before
+        }
+    })
+```
+
+**⑥ 结果页截完图又改回 before**
+
+```swift
+// screenshotAndUpload 回调里
+self?.gameState = .before
+```
+
+要追「怎么进到 pause 的」得在 `FingerFlowVC.swift`、`FingerFlowVC+Game.swift`、Timer、通知、Rx 闭包之间来回翻。
 
 ### 时间：两套钟表
 
@@ -68,7 +146,7 @@ circleAnimation.calculationMode = .paced                                  // 点
 guideDot.layer.add(circleAnimation, forKey: "Move")
 ```
 
-理论上两条时间轴该对齐；实际上 **Timer 走秒、动画走帧**，暂停时还要给 Layer 灌 `speed = 0`【`CALayer.pauseAnimation()` · `FingerFlowExtension.swift`；`FingerFlowGameView.pause()`】——**两套暂停 API，两套心跳**。  
+理论上两条时间轴该对齐；实际上 **Timer 走秒、动画走帧**，暂停时还要给 Layer 设置 `speed = 0`【`CALayer.pauseAnimation()` · `FingerFlowExtension.swift`；`FingerFlowGameView.pause()`】——**两套暂停 API，两套心跳**。  
 进度条和业务里程碑偶尔「各想各的」，排查起来像查灵异事件。
 
 ### 路径：后台算，前台演
@@ -99,9 +177,51 @@ pressState = guideFrame.contains(point) ? .inside : .outside
 
 ### 状态：Reducer 管理
 
-所有变化走 `send(Event)` → `Reducer` → `[Effect]`。【`NewFingerFlowViewController.send(_:)` → `NewFingerFlowReducer.send(_:snapshot:)`】  
-ViewController 只负责「照单执行」`apply(effects)`——不再到处 `switch gameState`。  
-状态图能画、单测能写、QA 能对着表点：从 `preparation` 到 `running` 到 `paused`，每条路有编号。【`NewFingerFlowPhase` · `NewFingerFlowReducer.handlePress`】
+Legacy 里谁都能 `gameState = …`；New 里**只有一条管道**：
+
+```mermaid
+flowchart TB
+  subgraph in["事件来源 Event"]
+    E1["长按手势<br/>pressChanged"]
+    E2["主时钟每帧<br/>masterClockTick"]
+    E3["准备 3s / 暂停宽限 5s<br/>preparationFinished · pauseGraceFinished"]
+    E4["暂停浮层<br/>继续 / 退出"]
+    E5["进后台<br/>appEnteredBackground"]
+    E6["resetRequested"]
+  end
+
+  SEND["NewFingerFlowViewController<br/>send(event)"]
+  REDUCER["NewFingerFlowReducer<br/>send(event, snapshot)"]
+  OUT["返回 (nextSnapshot, [Effect])"]
+  SNAP["snapshot ← nextSnapshot<br/>（phase · elapsed · press …）"]
+  APPLY["apply(effects)<br/>逐条 switch，只干副作用"]
+
+  subgraph out["执行面（VC 不直接改状态机逻辑）"]
+    O1["gameView<br/>路径 / 圆点 / 文案"]
+    O2["masterClock<br/>start · suspend · resume"]
+    O3["CountdownClock<br/>准备 / 宽限"]
+    O4["暂停浮层 · 音频 · Chrome"]
+  end
+
+  in --> SEND
+  SEND --> REDUCER
+  REDUCER --> OUT
+  OUT --> SNAP
+  SNAP --> APPLY
+  APPLY --> out
+```
+
+对应代码就三行：
+
+```swift
+// NewFingerFlowViewController.swift
+let (next, effects) = reducer.send(event, snapshot: snapshot)
+snapshot = next
+apply(effects)
+```
+
+Reducer 里集中 `(phase, press) → 新 phase + Effect 列表`【`NewFingerFlowReducer.handlePress`】；  
+VC 不再到处 `switch gameState`，状态图能画、单测能写、QA 能对着 `NewFingerFlowPhase` 逐条点。
 
 ### 时间：一根主钟
 
@@ -181,4 +301,4 @@ let point = built.arcLengthPath.point(atFraction: CGFloat(dotT), hintIndex: &arc
 
 ---
 
-*文档路径：`YKFingerFlow/DesignStory.md`。公式与几何见 [`TechTalk.md`](TechTalk.md)；技术对照见 [`Optimization.md`](Optimization.md)。*
+*文档路径：`YKFingerFlow/DesignStory.md`。公式与几何见 `[TechTalk.md](TechTalk.md)`；技术对照见 `[Optimization.md](Optimization.md)`。*

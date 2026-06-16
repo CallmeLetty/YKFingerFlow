@@ -240,7 +240,7 @@ class FingerFlowGameView: UIView {
   private lazy var startLayer = {
     let shapeLayer = CAShapeLayer()
 
-    shapeLayer.strokeColor = UIColor.blue.cgColor
+    shapeLayer.strokeColor = UIColor.systemTeal.cgColor
     shapeLayer.fillColor = UIColor.clear.cgColor
     shapeLayer.lineWidth = 6.0
     shapeLayer.lineCap = .round
@@ -337,7 +337,7 @@ private extension FingerFlowGameView {
       progressPath.append(path)
     }
     let gameLayer = CAShapeLayer()
-    gameLayer.strokeColor = UIColor.blue.cgColor
+    gameLayer.strokeColor = UIColor.systemTeal.cgColor
     gameLayer.fillColor = UIColor.clear.cgColor
     gameLayer.lineWidth = 6.0
     gameLayer.lineCap = .round
